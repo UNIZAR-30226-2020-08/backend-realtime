@@ -10,5 +10,3 @@ class UsuarioService {
       });
   }
 }
-
-export default new UsuarioService();

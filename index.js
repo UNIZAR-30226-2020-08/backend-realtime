@@ -1,5 +1,5 @@
-const pertenece = require("pertenece.service");
-const usuario = require("usuario.service");
+const pertenece = require("./services/pertenece.service");
+const usuario = require("./services/usuario.service");
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');

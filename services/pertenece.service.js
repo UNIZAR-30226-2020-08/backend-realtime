@@ -18,5 +18,3 @@ class PerteneceService {
       });
   }
 }
-
-export default new PerteneceService();
