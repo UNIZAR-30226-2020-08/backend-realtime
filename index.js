@@ -1,5 +1,5 @@
-const pertenece = require("./services/pertenece.service");
-const usuario = require("./services/usuario.service");
+const { joinGame, repartirCartas, findAllPlayers } = require("./services/pertenece.service");
+const { findUser } = require("./services/usuario.service");
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
@@ -25,11 +25,11 @@ io.on('connect', (socket) => {
     if(error) return callback(error);
 
     socket.join(user.room);
-    pertenece.joinGame({juagdor: name, partida: room})
+    joinGame({juagdor: name, partida: room})
     .then(data => {
       if (data.orden === '4'){
         for (u of getUsersInRoom(user.room)){
-          pertenece.repartirCartas({partida: user.room, jugador: user.name})
+          repartirCartas({partida: user.room, jugador: user.name})
           .then(data => {
             io.to(u.id).emit('RepartirCartas', data);
           }).catch( err =>{
@@ -45,9 +45,9 @@ io.on('connect', (socket) => {
     socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
     // Falta buscar informacion de usuario 
     for (u of getUsersInRoom(user.room)){
-      usuario.findUser(u.name)
+      findUser(u.name)
       .then( dataUser => {
-        pertenece.findAllPlayers(u.room)
+        findAllPlayers(u.room)
         .then(dataPer => {
           io.to(u.id).emit('Datos de usuario + jugadores en sala ', dataUser, dataPer);
         }).catch(err => {
