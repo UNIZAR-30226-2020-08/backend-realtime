@@ -17,4 +17,12 @@ class PerteneceService {
         return response.data;
       });
   }
+
+  findAllPlayers(partida){
+    return axios
+      .get(http.URL_PERTENECE_FINDALL + partida)
+      .then(response => {
+        return response.data;
+      });
+  }
 }

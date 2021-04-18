@@ -44,6 +44,19 @@ io.on('connect', (socket) => {
 
     socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
     // Falta buscar informacion de usuario 
+    for (u of getUsersInRoom(user.room)){
+      usuario.findUser(u.name)
+      .then( dataUser => {
+        pertenece.findAllPlayers(u.room)
+        .then(dataPer => {
+          io.to(u.id).emit('Datos de usuario + jugadores en sala ', dataUser, dataPer);
+        }).catch(err => {
+          console.log(err);
+        });
+      }).catch( err => {
+        console.log(err);
+      });
+    }
     io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
 
     callback();
