@@ -8,3 +8,5 @@ const findUser = (username) => {
       return respone.data;
     });
 }
+
+module.exports = {findUser};

@@ -7,7 +7,7 @@ const joinGame = (data) => {
     .then(response => {
       return response.data;
     });
-}
+};
 
 const repartirCartas = (data) => {
   return axios
@@ -24,3 +24,5 @@ const findAllPlayers = (partida) => {
       return response.data;
     });
 }
+
+module.exports = { joinGame, repartirCartas, findAllPlayers };

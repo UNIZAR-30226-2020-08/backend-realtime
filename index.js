@@ -1,12 +1,11 @@
-const { joinGame, repartirCartas, findAllPlayers } = require("./services/pertenece.service");
-const { findUser } = require("./services/usuario.service");
 const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
-
+const { joinGame, repartirCartas, findAllPlayers } = require("./services/pertenece.service.js");
+const { findUser } = require("./services/usuario.service");
 const router = require('./router');
 
 const app = express();
