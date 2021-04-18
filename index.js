@@ -69,14 +69,6 @@ io.on('connect', (socket) => {
     callback();
   });
 
-  socket.on('sendMessage', (message, callback) => {
-    const user = getUser(socket.id);
-
-    io.to(user.room).emit('message', { user: user.name, carta: message });
-
-    callback();
-  });
-
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
 
