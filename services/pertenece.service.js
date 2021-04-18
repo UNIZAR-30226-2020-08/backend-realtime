@@ -2,11 +2,18 @@ const axios = require ("axios");
 const http = require ('../http-common');
 
 const joinGame = (data) => {
+  //console.log(data)
   return axios
     .post(http.URL_PERTENECE_JOIN_GAME, data)
     .then(response => {
+      //console.log(response);
       return response.data;
-    });
+    })
+    .catch(err =>{
+      //console.log(err);
+    })
+    ;
+
 };
 
 const repartirCartas = (data) => {

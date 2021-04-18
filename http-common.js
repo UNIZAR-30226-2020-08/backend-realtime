@@ -12,5 +12,5 @@ module.exports = {
   URL_PERTENECE_JOIN_GAME: BASE_URL + "pertenece/",
   URL_USUARIO_FIND: BASE_URL + "usuario/findUser/",
   URL_PERTENECE_REPARTIR: BASE_URL + "pertenece/repartir/",
-  URL_PERTENECE_FINDALL: BASE_URL + "pertenece/repartir/findAllBelong/",
+  URL_PERTENECE_FINDALL: BASE_URL + "pertenece/findAllBelong/",
 };

@@ -16,7 +16,7 @@ app.use(cors());
 app.use(router);
 
 io.on('connect', (socket) => {
-  console.log(socket);
+  //console.log(socket);
 
   socket.on('join', ({ name, room }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
@@ -24,20 +24,25 @@ io.on('connect', (socket) => {
     if(error) return callback(error);
 
     socket.join(user.room);
-    joinGame({juagdor: name, partida: room})
+    var data = {
+      jugador: name, partida: room
+    }
+    joinGame(data)
     .then(data => {
-      if (data.orden === '4'){
+      if (data.orden == 4){
         for (u of getUsersInRoom(user.room)){
-          repartirCartas({partida: user.room, jugador: user.name})
+          console.log(u)
+          repartirCartas({partida: u.room, jugador: u.name})
           .then(data => {
+            console.log(data)
             io.to(u.id).emit('RepartirCartas', data);
           }).catch( err =>{
-            console.log(err);
+            //console.log(err);
           });
         }
       }
     }).catch(err => {
-      console.log(err);
+      //console.log(err);
     });
     socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
 
@@ -50,10 +55,10 @@ io.on('connect', (socket) => {
         .then(dataPer => {
           io.to(u.id).emit('Datos de usuario + jugadores en sala ', dataUser, dataPer);
         }).catch(err => {
-          console.log(err);
+          //console.log(err);
         });
       }).catch( err => {
-        console.log(err);
+        //console.log(err);
       });
     }
     io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
