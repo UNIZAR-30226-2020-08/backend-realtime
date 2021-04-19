@@ -15,10 +15,10 @@ const io = socketio(server);
 app.use(cors());
 app.use(router);
 
-io.on('connect', (socket) => {
+io.on('connect',  (socket) => {
   //console.log(socket);
 
-  socket.on('join', ({ name, room }, callback) => {
+  socket.on('join',  ({ name, room }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
 
     if(error) return callback(error);
@@ -30,17 +30,13 @@ io.on('connect', (socket) => {
       jugador: name, partida: room
     }
     joinGame(data)
-    .then(data => {
+    .then(async data => {
       if (data.orden == 4){
         for (u of getUsersInRoom(user.room)){
-          repartirCartas({partida: u.room, jugador: u.name})
-          .then(data => {
-            console.log(data)
-            socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
-            socket.emit('RepartirCartas', {repartidas: data});
-          }).catch( err =>{
-            //console.log(err);
-          });
+          data = await repartirCartas({partida: u.room, jugador: u.name})
+          console.log(data)
+          socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
+          socket.emit('RepartirCartas', {repartidas: data});
         }
       }
     }).catch(err => {
