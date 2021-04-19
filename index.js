@@ -39,10 +39,17 @@ io.on('connect',  (socket) => {
           socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
           socket.emit('RepartirCartas', {repartidas: data});
         }
+        getTriunfo(user.room)
+        .then( data => {
+          socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
+          socket.emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
+        }).catch(err => {
+        });
       }
     }).catch(err => {
       //console.log(err);
     });
+    
     socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
 
     socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
