@@ -23,6 +23,8 @@ io.on('connect', (socket) => {
 
     if(error) return callback(error);
 
+    
+
     socket.join(user.room);
     var data = {
       jugador: name, partida: room
@@ -31,11 +33,11 @@ io.on('connect', (socket) => {
     .then(data => {
       if (data.orden == 4){
         for (u of getUsersInRoom(user.room)){
-          console.log(u)
           repartirCartas({partida: u.room, jugador: u.name})
           .then(data => {
             console.log(data)
-            io.to(u.id).emit('RepartirCartas', data);
+            socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
+            socket.emit('RepartirCartas', {repartidas: data});
           }).catch( err =>{
             //console.log(err);
           });
