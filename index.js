@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
-const { joinGame, repartirCartas, findAllPlayers } = require("./services/pertenece.service.js");
+const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
 const { getTriunfo } = require("./services/partida.service");
 const { jugarCarta } = require("./services/jugada.service");
