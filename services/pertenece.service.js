@@ -32,4 +32,12 @@ const findAllPlayers = (partida) => {
     });
 }
 
-module.exports = { joinGame, repartirCartas, findAllPlayers };
+const robarCarta = (data) => {
+  return axios
+    .put(http.URL_PERTENECE_ROBAR + data.partida + '/' + data.jugador)
+    .then(response => {
+      return response.data;
+    });
+}
+
+module.exports = { joinGame, repartirCartas, findAllPlayers, robarCarta };
