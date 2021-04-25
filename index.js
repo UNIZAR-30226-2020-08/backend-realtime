@@ -81,6 +81,40 @@ io.on('connect',  (socket) => {
     callback();
   });
 
+  /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    partida: <nombre_partida>,
+    nronda: <numero_ronda>,
+    carta: <carta_lanzada>
+  }
+  */
+  socket.on('lanzarCarta', (data, callback) => {
+    jugarCarta(data)
+    .then(dataPlay => {
+      io.to(data.partida).emit('jugada', dataPlay);
+    }).catch( err => {
+      console.log(err);
+    });
+    callback();
+  });
+
+  /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    partida: <nombre_partida>
+  }
+  */
+  socket.on('robarCarta', (data, callback) => {
+    robarCarta(data)
+    .then(dataRob => {
+      io.to(data.jugador).emit('robado', dataRob);
+    }).catch( err => {
+      console.log(err);
+    });
+    callback();
+  });
+
   socket.on('disconnect', () => {
     const user = removeUser(socket.id);
 
