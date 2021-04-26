@@ -11,9 +11,7 @@ const joinGame = (data) => {
     })
     .catch(err =>{
       //console.log(err);
-    })
-    ;
-
+    });
 };
 
 const repartirCartas = (data) => {
