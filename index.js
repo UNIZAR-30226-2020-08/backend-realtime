@@ -101,17 +101,20 @@ io.on('connect',  (socket) => {
 
   /* FORMATO DE DATA
   data = {
-    jugador: <username>,
     partida: <nombre_partida>
   }
   */
-  socket.on('robarCarta', (data, callback) => {
-    robarCarta(data)
-    .then(dataRob => {
-      io.to(data.jugador).emit('robado', dataRob);
-    }).catch( err => {
-      console.log(err);
-    });
+  socket.on('robarCarta', async (data, callback) => {
+    for (u of getUsersInRoom(data.partida)){
+      data['jugador'] = u;
+      console.log(data);
+      await robarCarta(data)
+      .then(dataRob => {
+        io.to(data.jugador).emit('robado', dataRob);
+      }).catch( err => {
+        console.log(err);
+      });
+    }
     callback();
   });
 
