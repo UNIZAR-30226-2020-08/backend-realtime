@@ -20,12 +20,15 @@ app.use(router);
 io.on('connect',  (socket) => {
   //console.log(socket);
 
-  socket.on('join',  ({ name, room }, callback) => {
+  socket.on('join',  ({ name, room, tipo }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
-
+    var maxPlayers;
+    if (tipo === 0){
+      maxPlayers = 2;
+    }else if (tipo === 1){
+      maxPlayers = 4;
+    }
     if(error) return callback(error);
-
-    
 
     socket.join(user.room);
     var data = {
@@ -33,14 +36,14 @@ io.on('connect',  (socket) => {
     }
     joinGame(data)
     .then(async data => {
-      if (data.orden == 4){
+      if (data.orden === maxPlayers){
         for (u of getUsersInRoom(user.room)){
           data = await repartirCartas({partida: u.room, jugador: u.name})
           console.log(data)
           socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
           socket.emit('RepartirCartas', {repartidas: data});
         }
-        getTriunfo(user.room)
+        await getTriunfo(user.room)
         .then( data => {
           socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
           socket.emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
@@ -106,10 +109,11 @@ io.on('connect',  (socket) => {
   */
   socket.on('robarCarta', async (data, callback) => {
     for (u of getUsersInRoom(data.partida)){
-      data['jugador'] = u;
+      data['jugador'] = u.name;
       console.log(data);
       await robarCarta(data)
       .then(dataRob => {
+        console.log(dataRob);
         io.to(data.jugador).emit('robado', dataRob);
       }).catch( err => {
         console.log(err);
