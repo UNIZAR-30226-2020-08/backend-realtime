@@ -119,7 +119,7 @@ io.on('connect',  (socket) => {
       await robarCarta(data)
       .then(dataRob => {
         console.log(dataRob);
-        io.to(data.partida).emit('roba', {roba: dataWinner.jugador});
+        io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
       }).catch( err => {
         console.log(err);
       });
