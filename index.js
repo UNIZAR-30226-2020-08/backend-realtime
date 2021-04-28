@@ -7,7 +7,7 @@ const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require(
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
 const { getTriunfo, cambair7, cantar } = require("./services/partida.service");
-const { jugarCarta } = require("./services/jugada.service");
+const { jugarCarta, getRoundWinner } = require("./services/jugada.service");
 const router = require('./router');
 
 const app = express();
@@ -119,11 +119,28 @@ io.on('connect',  (socket) => {
       await robarCarta(data)
       .then(dataRob => {
         console.log(dataRob);
-        io.to(data.jugador).emit('roba', {roba: dataRob.data});
+        io.to(data.partida).emit('roba', {roba: dataWinner.jugador});
       }).catch( err => {
         console.log(err);
       });
     }
+    callback();
+  });
+
+    /* FORMATO DE DATA
+  data = {
+    partida: <nombre_partida>,
+    nronda: <ronda>
+  }
+  */
+  socket.on('contarPuntos', async (data, callback) => {
+    getRoundWinner(data)
+    .then(async dataWinner => {
+      console.log(dataWinner);
+      io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
+    }).catch( err => {
+      console.log(err);
+    });
     callback();
   });
 
