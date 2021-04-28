@@ -3,10 +3,10 @@ const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
+const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
-const { getTriunfo } = require("./services/partida.service");
+const { getTriunfo, cambair7, cantar } = require("./services/partida.service");
 const { jugarCarta } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -94,8 +94,12 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCarta', (data, callback) => {
     jugarCarta(data)
-    .then(dataPlay => {
-      io.to(data.partida).emit('jugada', dataPlay);
+    .then(async dataPlay => {
+      console.log(dataPlay);
+      const uId = await getUser(data.juagdor);
+      io.to(uId).emit('jugada', {mano: dataPlay.mano});
+      io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
+                                               jugador: dataPlay.cartaJugada.jugador});
     }).catch( err => {
       console.log(err);
     });
@@ -104,7 +108,8 @@ io.on('connect',  (socket) => {
 
   /* FORMATO DE DATA
   data = {
-    partida: <nombre_partida>
+    partida: <nombre_partida>,
+    nronda: <ronda>
   }
   */
   socket.on('robarCarta', async (data, callback) => {
@@ -114,11 +119,30 @@ io.on('connect',  (socket) => {
       await robarCarta(data)
       .then(dataRob => {
         console.log(dataRob);
-        io.to(data.jugador).emit('robado', dataRob);
+        io.to(data.jugador).emit('roba', {roba: dataRob.data});
       }).catch( err => {
         console.log(err);
       });
     }
+    callback();
+  });
+
+  /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    nombre: <nombre_partida>,
+  }
+  */
+  socket.on('cambair7', (data, callback) => {
+    cambair7(data)
+    .then(async dataCambio => {
+      console.log(dataCambio);
+      const uId = await getUserByName(data.juagdor);
+      io.to(uId.id).emit('cambio', {tuya: dataCambio.pertenece});
+      io.to(data.partida).emit('CartaAbajo', {});
+    }).catch( err => {
+      console.log(err);
+    });
     callback();
   });
 

@@ -16,4 +16,6 @@ module.exports = {
   URL_PARTIDA_FIND: BASE_URL + "partida/findGame/",
   URL_PERTENECE_ROBAR: BASE_URL + "pertenece/robar/",
   URL_JUGADA_CREAR: BASE_URL + "jugada/",
+  URL_PARTIDA_CANTAR: BASE_URL + "partida/cantar/",
+  URL_PARTIDA_CAMBIAR7: BASE_URL + "partida/cambiar7/",
 };
