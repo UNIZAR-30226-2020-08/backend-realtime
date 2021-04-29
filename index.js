@@ -156,9 +156,28 @@ io.on('connect',  (socket) => {
     cambair7(data)
     .then(async dataCambio => {
       console.log(dataCambio);
-      const uId = await getUserByName(data.juagdor);
-      io.to(uId.id).emit('cambio', {tuya: dataCambio.pertenece});
-      io.to(data.partida).emit('CartaAbajo', {});
+      //const uId = await getUserByName(data.juagdor);
+      //io.to(uId.id).emit('cambio', {tuya: dataCambio.pertenece});
+      io.to(data.nombre).emit('CartaAbajo', {dataCambio});
+    }).catch( err => {
+      console.log(err);
+    });
+    callback();
+  });
+
+   /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    nombre: <nombre_partida>,
+  }
+  */
+  socket.on('cantar', (data, callback) => {
+    cantar(data)
+    .then(async dataCante => {
+      console.log(dataCante);
+      //const uId = await getUserByName(data.juagdor);
+      //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
+      io.to(data.nombre).emit('cante', {dataCante});
     }).catch( err => {
       console.log(err);
     });
