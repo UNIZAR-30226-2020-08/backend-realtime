@@ -3,11 +3,11 @@ const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
 
-const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
+const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
-const { getTriunfo } = require("./services/partida.service");
-const { jugarCarta, getRoundOrder } = require("./services/jugada.service");
+const { getTriunfo, cambair7, cantar } = require("./services/partida.service");
+const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
 const app = express();
@@ -94,8 +94,12 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCarta', (data, callback) => {
     jugarCarta(data)
-    .then(dataPlay => {
-      io.to(data.partida).emit('jugada', dataPlay);
+    .then(async dataPlay => {
+      console.log(dataPlay);
+      const uId = await getUser(data.juagdor);
+      io.to(uId).emit('jugada', {mano: dataPlay.mano});
+      io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
+                                               jugador: dataPlay.cartaJugada.jugador});
     }).catch( err => {
       console.log(err);
     });
@@ -112,16 +116,52 @@ io.on('connect',  (socket) => {
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
     for (u of orden){
-      data['jugador'] = u.name;
+      //data['jugador'] = u.name;
       console.log(data);
       await robarCarta(data)
       .then(dataRob => {
         console.log(dataRob);
-        io.to(data.jugador).emit('robado', dataRob);
+        io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
       }).catch( err => {
         console.log(err);
       });
     }
+    callback();
+  });
+
+    /* FORMATO DE DATA
+  data = {
+    partida: <nombre_partida>,
+    nronda: <ronda>
+  }
+  */
+  socket.on('contarPuntos', async (data, callback) => {
+    getRoundWinner(data)
+    .then(async dataWinner => {
+      console.log(dataWinner);
+      io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
+    }).catch( err => {
+      console.log(err);
+    });
+    callback();
+  });
+
+  /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    nombre: <nombre_partida>,
+  }
+  */
+  socket.on('cambair7', (data, callback) => {
+    cambair7(data)
+    .then(async dataCambio => {
+      console.log(dataCambio);
+      const uId = await getUserByName(data.juagdor);
+      io.to(uId.id).emit('cambio', {tuya: dataCambio.pertenece});
+      io.to(data.partida).emit('CartaAbajo', {});
+    }).catch( err => {
+      console.log(err);
+    });
     callback();
   });
 

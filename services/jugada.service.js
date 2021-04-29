@@ -24,4 +24,17 @@ const getRoundOrder = (data) => {
       //console.log(err);
     });
 };
-module.exports = { jugarCarta, getRoundOrder };
+
+const getRoundWinner = (data) => {
+  return axios
+    .put(http.URL_JUGADA_RECUENTO + data.nronda + '/' + data.partida)
+    .then(response => {
+      return response.data;
+    })
+    .catch(err =>{
+      console.log(err)
+    });
+
+};
+
+module.exports = { jugarCarta, getRoundWinner, getRoundOrder};
