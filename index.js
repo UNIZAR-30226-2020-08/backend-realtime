@@ -7,7 +7,7 @@ const { addUser, removeUser, getUser, getUsersInRoom } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
 const { getTriunfo } = require("./services/partida.service");
-const { jugarCarta } = require("./services/jugada.service");
+const { jugarCarta, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
 const app = express();
@@ -104,11 +104,14 @@ io.on('connect',  (socket) => {
 
   /* FORMATO DE DATA
   data = {
-    partida: <nombre_partida>
+    partida: <nombre_partida>,
+    jugador: <username>,  // CAMBIO PERO CREO QUE PARA FER ES FACIL
+    nronda: <numero ronda>
   }
   */
   socket.on('robarCarta', async (data, callback) => {
-    for (u of getUsersInRoom(data.partida)){
+    const orden = await getRoundOrder(data);
+    for (u of orden){
       data['jugador'] = u.name;
       console.log(data);
       await robarCarta(data)

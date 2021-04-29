@@ -10,7 +10,18 @@ const jugarCarta = (data) => {
     .catch(err =>{
       console.log(err)
     });
+};
 
-}
-
-module.exports = { jugarCarta };
+const getRoundOrder = (data) => {
+  //console.log(data)
+  return axios
+    .get(http.URL_PARTIDA_FIND + data.nronda + '/' + data.partida)
+    .then(response => {
+      //console.log(response);
+      return response.data;
+    })
+    .catch(err =>{
+      //console.log(err);
+    });
+};
+module.exports = { jugarCarta, getRoundOrder };
