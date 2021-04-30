@@ -12,7 +12,7 @@ const getTriunfo = (partida) => {
     });
 };
 
-const cambair7 = (data) => {
+const cambiar7 = (data) => {
   return axios
     .put(http.URL_PARTIDA_CAMBIAR7 + data.nombre + '/' + data.jugador)
     .then(response => {
@@ -28,4 +28,4 @@ const cantar = (data) => {
     });
 }
 
-module.exports = { getTriunfo, cambair7, cantar };
+module.exports = { getTriunfo, cambiar7, cantar };

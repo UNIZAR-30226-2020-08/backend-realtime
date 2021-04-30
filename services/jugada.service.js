@@ -15,7 +15,7 @@ const jugarCarta = (data) => {
 const getRoundOrder = (data) => {
   //console.log(data)
   return axios
-    .get(http.URL_PARTIDA_FIND + data.nronda + '/' + data.partida)
+    .get(http.URL_JUGADA_GET_ORDEN + data.nronda + '/' + data.partida)
     .then(response => {
       //console.log(response);
       return response.data;

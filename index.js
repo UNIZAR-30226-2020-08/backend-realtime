@@ -6,7 +6,7 @@ const cors = require('cors');
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
-const { getTriunfo, cambair7, cantar } = require("./services/partida.service");
+const { getTriunfo, cambiar7, cantar } = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -109,14 +109,14 @@ io.on('connect',  (socket) => {
   /* FORMATO DE DATA
   data = {
     partida: <nombre_partida>,
-    jugador: <username>,  // CAMBIO PERO CREO QUE PARA FER ES FACIL
     nronda: <numero ronda>
   }
   */
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
+    console.log(orden);
     for (u of orden){
-      //data['jugador'] = u.name;
+      data['jugador'] = u;
       console.log(data);
       await robarCarta(data)
       .then(dataRob => {
@@ -152,13 +152,13 @@ io.on('connect',  (socket) => {
     nombre: <nombre_partida>,
   }
   */
-  socket.on('cambair7', (data, callback) => {
-    cambair7(data)
+  socket.on('cambiar7', (data, callback) => {
+    cambiar7(data)
     .then(async dataCambio => {
       console.log(dataCambio);
       //const uId = await getUserByName(data.juagdor);
-      //io.to(uId.id).emit('cambio', {tuya: dataCambio.pertenece});
-      io.to(data.nombre).emit('CartaAbajo', {dataCambio});
+      io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio.pertenece});
+      io.to(data.nombre).emit('cartaMedio', {medio: dataCambio.partidaCante});
     }).catch( err => {
       console.log(err);
     });
@@ -177,7 +177,7 @@ io.on('connect',  (socket) => {
       console.log(dataCante);
       //const uId = await getUserByName(data.juagdor);
       //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
-      io.to(data.nombre).emit('cante', {dataCante});
+      io.to(data.nombre).emit('cante', {cante: dataCante});
     }).catch( err => {
       console.log(err);
     });
