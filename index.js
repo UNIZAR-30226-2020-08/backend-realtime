@@ -92,18 +92,14 @@ io.on('connect',  (socket) => {
     carta: <carta_lanzada>
   }
   */
-  socket.on('lanzarCarta', (data, callback) => {
-    jugarCarta(data)
-    .then(async dataPlay => {
-      console.log(dataPlay);
-      const uId = await getUser(data.juagdor);
-      io.to(uId).emit('jugada', {mano: dataPlay.mano});
-      io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
-                                               jugador: dataPlay.cartaJugada.jugador});
-    }).catch( err => {
-      console.log(err);
-    });
-    callback();
+  socket.on('lanzarCarta', async (data, callback) => {
+    const dataPlay = await jugarCarta(data)
+    console.log(dataPlay);
+    const uId = await getUser(data.juagdor);
+    io.to(uId).emit('jugada', {mano: dataPlay.mano});
+    io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
+                                              jugador: dataPlay.cartaJugada.jugador});
+  callback();
   });
 
   /* FORMATO DE DATA
@@ -118,13 +114,9 @@ io.on('connect',  (socket) => {
     for (u of orden){
       data['jugador'] = u;
       console.log(data);
-      await robarCarta(data)
-      .then(dataRob => {
-        console.log(dataRob);
-        io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
-      }).catch( err => {
-        console.log(err);
-      });
+      const dataRob = await robarCarta(data)
+      console.log(dataRob);
+      io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
     }
     callback();
   });
@@ -136,13 +128,9 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('contarPuntos', async (data, callback) => {
-    getRoundWinner(data)
-    .then(async dataWinner => {
-      console.log(dataWinner);
-      io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
-    }).catch( err => {
-      console.log(err);
-    });
+    const dataWinner = await getRoundWinner(data)
+    console.log(dataWinner);
+    io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
     callback();
   });
 
@@ -152,16 +140,12 @@ io.on('connect',  (socket) => {
     nombre: <nombre_partida>,
   }
   */
-  socket.on('cambiar7', (data, callback) => {
-    cambiar7(data)
-    .then(async dataCambio => {
-      console.log(dataCambio);
-      //const uId = await getUserByName(data.juagdor);
-      io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio.pertenece});
-      io.to(data.nombre).emit('cartaMedio', {medio: dataCambio.partidaCante});
-    }).catch( err => {
-      console.log(err);
-    });
+  socket.on('cambiar7', async (data, callback) => {
+    const dataCambio = await cambiar7(data)
+    console.log(dataCambio);
+    //const uId = await getUserByName(data.juagdor);
+    io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio.pertenece});
+    io.to(data.nombre).emit('cartaMedio', {medio: dataCambio.partidaCante});
     callback();
   });
 
@@ -171,16 +155,12 @@ io.on('connect',  (socket) => {
     nombre: <nombre_partida>,
   }
   */
-  socket.on('cantar', (data, callback) => {
-    cantar(data)
-    .then(async dataCante => {
-      console.log(dataCante);
-      //const uId = await getUserByName(data.juagdor);
-      //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
-      io.to(data.nombre).emit('cante', {cante: dataCante});
-    }).catch( err => {
-      console.log(err);
-    });
+  socket.on('cantar', async (data, callback) => {
+    const dataCante = await cantar(data)
+    console.log(dataCante);
+    //const uId = await getUserByName(data.juagdor);
+    //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
+    io.to(data.nombre).emit('cante', {cante: dataCante});
     callback();
   });
 
