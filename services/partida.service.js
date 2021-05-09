@@ -28,4 +28,12 @@ const cantar = (data) => {
     });
 }
 
-module.exports = { getTriunfo, cambiar7, cantar };
+const partidaVueltas = (data) => {
+  return axios
+    .put(http.URL_PARTIDA_VUELTAS + data.partida)
+    .then(response => {
+      return response.data;
+    });
+};
+
+module.exports = { getTriunfo, cambiar7, cantar, partidaVueltas };

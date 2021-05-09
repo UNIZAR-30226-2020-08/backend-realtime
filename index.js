@@ -6,7 +6,8 @@ const cors = require('cors');
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
-const { getTriunfo, cambiar7, cantar } = require("./services/partida.service");
+const { deleteCard } = require("./services/carta_disponible.service");
+const { getTriunfo, cambiar7, cantar, partidaVueltas } = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -131,6 +132,37 @@ io.on('connect',  (socket) => {
     const dataWinner = await getRoundWinner(data)
     console.log(dataWinner);
     io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
+    callback();
+  });
+
+    /* FORMATO DE DATA
+  data = {
+    partida: <nombre_partida>
+  }
+  */
+  socket.on('finalizarPartida', async (data, callback) => {
+    const dataPartida = await getTriunfo(data.partida)
+    console.log(dataPartida);
+    const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
+    console.log(dataDelete)
+    if (dataPartida.puntos_e0 >= 101){
+      io.to(data.partida).emit('Equipo ganador', {ganador: 'equipo 0'});
+    }else if (dataPartida.puntos_e1 >= 101){
+      io.to(data.partida).emit('Equipo ganador', {ganador: 'equipo 1'});
+    }else{
+      io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas'});
+      const dataVueltas = await partidaVueltas(data)
+      console.log(dataVueltas)
+      //Se reparte de nuevo
+      for (u of getUsersInRoom(data.partida)){
+        var data = await repartirCartas({partida: u.room, jugador: u.name})
+        console.log(data)
+        socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: data});
+        socket.emit('RepartirCartas', {repartidas: data});
+      }
+      const dataTriunfo = await getTriunfo(data.partida)
+      io.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataTriunfo.triunfo});
+    }
     callback();
   });
 

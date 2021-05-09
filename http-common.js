@@ -20,4 +20,6 @@ module.exports = {
   URL_PARTIDA_CANTAR: BASE_URL + "partida/cantar/",
   URL_PARTIDA_CAMBIAR7: BASE_URL + "partida/cambiar7/",
   URL_JUGADA_RECUENTO: BASE_URL + "jugada/getRoundWinner/",
+  URL_PARTIDA_VUELTAS: BASE_URL + "partida/partidaVueltas/",
+  URL_CARTA_DISPONIBLE_DELETE: BASE_URL + "cartaDisponible/dropACard/",
 };
