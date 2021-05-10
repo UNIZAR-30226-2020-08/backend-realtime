@@ -13,6 +13,7 @@ module.exports = {
   URL_USUARIO_FIND: BASE_URL + "usuario/findUser/",
   URL_PERTENECE_REPARTIR: BASE_URL + "pertenece/repartir/",
   URL_PERTENECE_FINDALL: BASE_URL + "pertenece/findAllBelong/",
+  URL_PERTENECE_FIND: BASE_URL + "pertenece/findBelong/",
   URL_PARTIDA_FIND: BASE_URL + "partida/findGame/",
   URL_PERTENECE_ROBAR: BASE_URL + "pertenece/robar/",
   URL_JUGADA_CREAR: BASE_URL + "jugada/",

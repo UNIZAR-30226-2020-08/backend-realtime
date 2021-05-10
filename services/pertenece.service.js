@@ -38,4 +38,11 @@ const robarCarta = (data) => {
     });
 }
 
-module.exports = { joinGame, repartirCartas, findAllPlayers, robarCarta };
+const findPlayer = (data) => {
+  return axios
+    .get(http.URL_PERTENECE_FIND + data.partida + '/' + data.jugador)
+    .then(response => {
+      return response.data;
+    });
+}
+module.exports = { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer};

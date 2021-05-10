@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
-const { joinGame, repartirCartas, findAllPlayers, robarCarta } = require("./services/pertenece.service");
+const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas } = require("./services/partida.service");
@@ -21,7 +21,7 @@ app.use(router);
 io.on('connect',  (socket) => {
   //console.log(socket);
 
-  socket.on('join',  ({ name, room, tipo }, callback) => {
+  socket.on('join',  async({ name, room, tipo }, callback) => {
     const { error, user } = addUser({ id: socket.id, name, room });
     var maxPlayers;
     if (tipo === 0){
@@ -30,31 +30,29 @@ io.on('connect',  (socket) => {
       maxPlayers = 4;
     }
     if(error) return callback(error);
-
     socket.join(user.room);
-    var data = {
-      jugador: name, partida: room
-    }
-    joinGame(data)
+
+    joinGame({jugador: name, partida: room})
     .then(async data => {
+      socket.emit('orden', {orden: data.orden});
+      console.log(`Tu orden es : ${data.orden}`)
       if (data.orden === maxPlayers){
         for (u of getUsersInRoom(user.room)){
           data = await repartirCartas({partida: u.room, jugador: u.name})
+          const dataPlayer = await findUser(name)
+          data['copas'] = dataPlayer.copas
+          data['f_perfil'] = dataPlayer.f_perfil
           console.log(data)
           socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
           socket.emit('RepartirCartas', {repartidas: data});
         }
-        await getTriunfo(user.room)
-        .then( data => {
-          socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
-          socket.emit('RepartirTriunfo', {triunfoRepartido: data.triunfo});
-        }).catch(err => {
-        });
+        const dataT = await getTriunfo(user.room)
+        socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+        socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
       }
     }).catch(err => {
       //console.log(err);
     });
-    
     socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
 
     socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
@@ -72,7 +70,7 @@ io.on('connect',  (socket) => {
         //console.log(err);
       });
     }
-    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room) });
+    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room), tipoPartida:tipo});
 
     callback();
   });
@@ -176,8 +174,7 @@ io.on('connect',  (socket) => {
     const dataCambio = await cambiar7(data)
     console.log(dataCambio);
     //const uId = await getUserByName(data.juagdor);
-    io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio.pertenece});
-    io.to(data.nombre).emit('cartaMedio', {medio: dataCambio.partidaCante});
+    io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
     callback();
   });
 
@@ -192,7 +189,7 @@ io.on('connect',  (socket) => {
     console.log(dataCante);
     //const uId = await getUserByName(data.juagdor);
     //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
-    io.to(data.nombre).emit('cante', {cante: dataCante});
+    io.to(data.nombre).emit('cante', dataCante);
     callback();
   });
 
