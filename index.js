@@ -87,7 +87,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCarta', async (data, callback) => {
     const dataPlay = await jugarCarta(data)
-    console.log(dataPlay);
+    console.log(dataPlay.cartaJugada);
     const uId = await getUser(data.juagdor);
     io.to(uId).emit('jugada', {mano: dataPlay.mano});
     io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
@@ -103,12 +103,12 @@ io.on('connect',  (socket) => {
   */
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
-    console.log(orden);
+    //console.log(orden);
     for (u of orden){
       data['jugador'] = u;
-      console.log(data);
+      //console.log(data);
       const dataRob = await robarCarta(data)
-      console.log(dataRob);
+      console.log('Robar Carta',dataRob);
       io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
     }
     callback();
@@ -122,7 +122,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('contarPuntos', async (data, callback) => {
     const dataWinner = await getRoundWinner(data)
-    console.log(dataWinner);
+    console.log('Contar Puntos', dataWinner);
     io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
     callback();
   });
