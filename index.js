@@ -6,6 +6,7 @@ const cors = require('cors');
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
+const { createTorneo, emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas } = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
@@ -22,37 +23,31 @@ io.on('connect',  (socket) => {
   //console.log(socket);
 
   socket.on('join',  async({ name, room, tipo }, callback) => {
-    const { error, user } = addUser({ id: socket.id, name, room });
-    var maxPlayers;
-    if (tipo === 0){
-      maxPlayers = 2;
-    }else if (tipo === 1){
-      maxPlayers = 4;
-    }
+    const data = await joinGame({jugador: name, partida: room})
+    const { error, user } = addUser({ id: socket.id, name, room, orden: data.orden})
+    console.log(user)
+    var maxPlayers = (tipo+1)*2
+    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    
     if(error) return callback(error);
-    socket.join(user.room);
 
-    joinGame({jugador: name, partida: room})
-    .then(async data => {
-      socket.emit('orden', {orden: data.orden});
-      console.log(`Tu orden es : ${data.orden}`)
-      if (data.orden === maxPlayers){
-        for (u of getUsersInRoom(user.room)){
-          data = await repartirCartas({partida: u.room, jugador: u.name})
-          const dataPlayer = await findUser(name)
-          data['copas'] = dataPlayer.copas
-          data['f_perfil'] = dataPlayer.f_perfil
-          console.log(data)
-          socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: data});
-          socket.emit('RepartirCartas', {repartidas: data});
-        }
-        const dataT = await getTriunfo(user.room)
-        socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
-        socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+    socket.join(user.room);
+    socket.emit('orden', data.orden);
+    console.log(`Tu orden es : ${data.orden}`)
+    if (data.orden === maxPlayers){
+      for (u of getUsersInRoom(user.room)){
+        const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+        const dataPlayer = await findUser(u.name)
+        dataC['copas'] = dataPlayer.copas
+        dataC['f_perfil'] = dataPlayer.f_perfil
+        console.log(dataC)
+        socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
+        socket.emit('RepartirCartas', {repartidas: dataC});
       }
-    }).catch(err => {
-      //console.log(err);
-    });
+      const dataT = await getTriunfo(user.room)
+      socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+      socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+    }
     socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
 
     socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
@@ -70,7 +65,6 @@ io.on('connect',  (socket) => {
         //console.log(err);
       });
     }
-    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room), tipoPartida:tipo});
 
     callback();
   });
@@ -143,10 +137,9 @@ io.on('connect',  (socket) => {
     console.log(dataPartida);
     const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
     console.log(dataDelete)
-    if (dataPartida.puntos_e0 >= 101){
-      io.to(data.partida).emit('Equipo ganador', {ganador: 'equipo 0'});
-    }else if (dataPartida.puntos_e1 >= 101){
-      io.to(data.partida).emit('Equipo ganador', {ganador: 'equipo 1'});
+    if (dataPartida.puntos_e0 >= 101 | dataPartida.puntos_e1 >= 101){
+      io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
+                                             puntos_e1: dataPartida.puntos_e1 });
     }else{
       io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas'});
       const dataVueltas = await partidaVueltas(data)

@@ -23,4 +23,6 @@ module.exports = {
   URL_JUGADA_RECUENTO: BASE_URL + "jugada/getRoundWinner/",
   URL_PARTIDA_VUELTAS: BASE_URL + "partida/partidaVueltas/",
   URL_CARTA_DISPONIBLE_DELETE: BASE_URL + "cartaDisponible/dropACard/",
+  URL_TORNEO_CREATE: BASE_URL + "torneo/",
+  URL_TORNEO_EMPAREJAR: BASE_URL + "torneo/matchRound/"
 };
