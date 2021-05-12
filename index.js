@@ -122,8 +122,11 @@ io.on('connect',  (socket) => {
   */
   socket.on('contarPuntos', async (data, callback) => {
     const dataWinner = await getRoundWinner(data)
+    const dataPuntos = await getTriunfo(data.partida)
     console.log('Contar Puntos', dataWinner);
+    console.log('Puntos', {puntos_e0: dataPuntos.puntos_e0, puntos_e1: dataPuntos.puntos_e1});
     io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
+    io.to(data.partida).emit('puntos', {puntos_e0: dataPuntos.puntos_e0, puntos_e1: dataPuntos.puntos_e1});
     callback();
   });
 

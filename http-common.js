@@ -1,7 +1,7 @@
-const BACK_IP = "localhost";
-const BACK_PORT = "8080";
-const BACK_PROTOCOL = "http";
-const BASE_URL = BACK_PROTOCOL+"://"+BACK_IP+":"+BACK_PORT+"/api/";
+//const BACK_IP = "localhost";
+//const BACK_PORT = "8080";
+//const BACK_PROTOCOL = "http";
+const BASE_URL = "https://las10ultimas-backend.herokuapp.com/api/" //BACK_PROTOCOL+"://"+BACK_IP+":"+BACK_PORT+"/api/";
 module.exports = {
   AUTH_TOKEN: "auTh-Token-sTr726445",
   AUTH_SECRET: "C0ntra5enya-s3creta-t0ken",
