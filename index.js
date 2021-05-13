@@ -8,7 +8,7 @@ const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = req
 const { findUser } = require("./services/usuario.service");
 const { createTorneo, emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
-const { getTriunfo, cambiar7, cantar, partidaVueltas } = require("./services/partida.service");
+const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento } = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -140,7 +140,7 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('finalizarPartida', async (data, callback) => {
-    const dataPartida = await getTriunfo(data.partida)
+    const dataPartida = await recuento(data.partida)
     console.log(dataPartida);
     const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
     console.log(dataDelete)
