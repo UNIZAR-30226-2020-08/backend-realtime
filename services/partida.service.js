@@ -38,7 +38,7 @@ const partidaVueltas = (data) => {
 
 const recuento = (data) => {
   return axios
-    .put(http.URL_PARTIDA_RECUENTO + data.partida)
+    .put(http.URL_PARTIDA_RECUENTO + data)
     .then(response => {
       return response.data;
     }).catch(err =>{
