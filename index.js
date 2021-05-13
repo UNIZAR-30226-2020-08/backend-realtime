@@ -23,50 +23,54 @@ io.on('connect',  (socket) => {
   //console.log(socket);
 
   socket.on('join',  async({ name, room, tipo }, callback) => {
-    const data = await joinGame({jugador: name, partida: room})
-    const { error, user } = addUser({ id: socket.id, name, room, orden: data.orden})
-    console.log(user)
-    var maxPlayers = (tipo+1)*2
-    io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
-    
-    if(error) return callback(error);
-
-    socket.join(user.room);
-    socket.emit('orden', data.orden);
-    console.log(`Tu orden es : ${data.orden}`)
-    if (data.orden === maxPlayers){
-      for (u of getUsersInRoom(user.room)){
-        const dataC = await repartirCartas({partida: u.room, jugador: u.name})
-        const dataPlayer = await findUser(u.name)
-        dataC['copas'] = dataPlayer.copas
-        dataC['f_perfil'] = dataPlayer.f_perfil
-        console.log(dataC)
-        socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
-        socket.emit('RepartirCartas', {repartidas: dataC});
+    try {
+      const data = await joinGame({jugador: name, partida: room})
+      const { error, user } = addUser({ id: socket.id, name, room, orden: data.orden})
+      console.log(user)
+      var maxPlayers = (tipo+1)*2
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+      
+      if(error) return callback(error);
+  
+      socket.join(user.room);
+      socket.emit('orden', data.orden);
+      console.log(`Tu orden es : ${data.orden}`)
+      if (data.orden === maxPlayers){
+        for (u of getUsersInRoom(user.room)){
+          const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+          const dataPlayer = await findUser(u.name)
+          dataC['copas'] = dataPlayer.copas
+          dataC['f_perfil'] = dataPlayer.f_perfil
+          console.log(dataC)
+          socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
+          socket.emit('RepartirCartas', {repartidas: dataC});
+        }
+        const dataT = await getTriunfo(user.room)
+        socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+        socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
       }
-      const dataT = await getTriunfo(user.room)
-      socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
-      socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
-    }
-    socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
-
-    socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
-    // Falta buscar informacion de usuario 
-    for (u of getUsersInRoom(user.room)){
-      findUser(u.name)
-      .then( dataUser => {
-        findAllPlayers(u.room)
-        .then(dataPer => {
-          io.to(u.id).emit('Datos de usuario + jugadores en sala ', dataUser, dataPer);
-        }).catch(err => {
+      socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
+  
+      socket.broadcast.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
+      // Falta buscar informacion de usuario 
+      for (u of getUsersInRoom(user.room)){
+        findUser(u.name)
+        .then( dataUser => {
+          findAllPlayers(u.room)
+          .then(dataPer => {
+            io.to(u.id).emit('Datos de usuario + jugadores en sala ', dataUser, dataPer);
+          }).catch(err => {
+            //console.log(err);
+          });
+        }).catch( err => {
           //console.log(err);
         });
-      }).catch( err => {
-        //console.log(err);
-      });
+      }
+  
+      callback();
+    }catch(err){
+      console.log(err)
     }
-
-    callback();
   });
 
   socket.on('sendMessage', (message, callback) => {
