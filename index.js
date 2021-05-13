@@ -8,7 +8,7 @@ const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = req
 const { findUser } = require("./services/usuario.service");
 const { createTorneo, emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
-const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento } = require("./services/partida.service");
+const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame} = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -75,6 +75,22 @@ io.on('connect',  (socket) => {
 
   socket.on('sendMessage', (message, callback) => {
     const user = getUser(socket.id);
+
+    io.to(user.room).emit('message', { user: user.name, text: message });
+
+    callback();
+  });
+  
+  /* FORMATO DE DATA
+  data = {
+    jugador: <username>,
+    partida: <nombre_partida>,
+    nronda: <numero_ronda>,
+    carta: <carta_lanzada>
+  }
+  */
+  socket.on('pause', async (data, callback) => {
+    const dataPause = await pasueGame(data.partda);
 
     io.to(user.room).emit('message', { user: user.name, text: message });
 
@@ -154,10 +170,10 @@ io.on('connect',  (socket) => {
         console.log(dataVueltas)
         //Se reparte de nuevo
         for (u of getUsersInRoom(data.partida)){
-          var data = await repartirCartas({partida: u.room, jugador: u.name})
-          console.log(data)
-          socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: data});
-          socket.emit('RepartirCartas', {repartidas: data});
+          const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+          console.log(dataC)
+          socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: dataC});
+          socket.emit('RepartirCartas', {repartidas: dataC});
         }
         const dataTriunfo = await getTriunfo(data.partida)
         io.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataTriunfo.triunfo});

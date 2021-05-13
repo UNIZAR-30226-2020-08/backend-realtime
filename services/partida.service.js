@@ -46,4 +46,14 @@ const recuento = (data) => {
     });
 };
 
-module.exports = { getTriunfo, cambiar7, cantar, partidaVueltas,recuento };
+const pasueGame = (data) => {
+  return axios
+    .put(http.URL_PARTIDA_UPDATE + data)
+    .then(response => {
+      return response.data;
+    }).catch(err =>{
+      console.log(err);
+    });
+};
+
+module.exports = { getTriunfo, cambiar7, cantar, partidaVueltas,recuento, pasueGame};

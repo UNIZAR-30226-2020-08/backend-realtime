@@ -26,4 +26,5 @@ module.exports = {
   URL_TORNEO_CREATE: BASE_URL + "torneo/",
   URL_TORNEO_EMPAREJAR: BASE_URL + "torneo/matchRound/",
   URL_PARTIDA_RECUENTO: BASE_URL + "partida/recuento/",
+  URL_PARTIDA_UPDATE: BASE_URL + "partida/updateGame/",
 };
