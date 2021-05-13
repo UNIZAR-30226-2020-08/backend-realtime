@@ -171,9 +171,12 @@ io.on('connect',  (socket) => {
         //Se reparte de nuevo
         for (u of getUsersInRoom(data.partida)){
           const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+          const dataPlayer = await findUser(u.name)
+          dataC['copas'] = dataPlayer.copas
+          dataC['f_perfil'] = dataPlayer.f_perfil
           console.log(dataC)
-          io.to(data.partida).emit('RepartirCartas', {repartidas: dataC});
-          //socket.emit('RepartirCartas', {repartidas: dataC});
+          socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: dataC});
+          socket.emit('RepartirCartas', {repartidas: dataC});
         }
         const dataTriunfo = await getTriunfo(data.partida)
         io.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataTriunfo.triunfo});
