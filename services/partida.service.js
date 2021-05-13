@@ -41,6 +41,8 @@ const recuento = (data) => {
     .put(http.URL_PARTIDA_RECUENTO + data.partida)
     .then(response => {
       return response.data;
+    }).catch(err =>{
+      console.log(err);
     });
 };
 
