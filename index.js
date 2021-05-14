@@ -4,6 +4,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
+const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
 const { createTorneo, emparejamientos } = require("./services/torneo.service");
@@ -164,6 +165,8 @@ io.on('connect',  (socket) => {
       if (dataPartida.puntos_e0 >= 101 | dataPartida.puntos_e1 >= 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
                                                puntos_e1: dataPartida.puntos_e1 });
+        //Sumar a los ganadores
+        //Restar a los perdedores
       }else{
         io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas'});
         const dataVueltas = await partidaVueltas(data)
@@ -224,6 +227,21 @@ io.on('connect',  (socket) => {
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     }
   })
+// Empieza codigo de los torneos
+  socket.on('joinTournament',  async({name, tournament, tipo, nTeams }, callback) => {
+    try {
+      maxPlayers = (tipo + 1)*nTeams
+      const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
+      if(error) return callback(error);
+      io.to(player.tournament).emit('joinedT', {player});
+      if (nPlayers === maxPlayers){
+        io.to(player.tournament).emit('completo', {message: `torneo ${tournament} completo`});
+      }
+      callback();
+    }catch(err){
+      console.log(err)
+    }
+  });
 });
 
 server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));
