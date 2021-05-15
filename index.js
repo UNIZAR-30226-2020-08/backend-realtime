@@ -203,11 +203,16 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('cambiar7', async (data, callback) => {
-    const dataCambio = await cambiar7(data)
-    console.log(dataCambio);
-    //const uId = await getUserByName(data.juagdor);
-    io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
-    callback();
+    try{
+      const dataCambio = await cambiar7(data)
+      console.log(dataCambio);
+      //const uId = await getUserByName(data.juagdor);
+      io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
+      callback();
+    }catch(err){
+      console.log(err)
+    }
+    
   });
 
    /* FORMATO DE DATA
@@ -217,12 +222,16 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('cantar', async (data, callback) => {
-    const dataCante = await cantar(data)
-    console.log(dataCante);
-    //const uId = await getUserByName(data.juagdor);
-    //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
-    io.to(data.nombre).emit('cante', dataCante);
-    callback();
+    try{
+      const dataCante = await cantar(data)
+      console.log(dataCante);
+      //const uId = await getUserByName(data.juagdor);
+      //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
+      io.to(data.nombre).emit('cante', dataCante);
+      callback();
+    }catch(err){
+      console.log(err)
+    }
   });
 
   socket.on('disconnect', () => {
