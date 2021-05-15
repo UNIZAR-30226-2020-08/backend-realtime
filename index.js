@@ -7,7 +7,7 @@ const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require(
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser } = require("./services/usuario.service");
-const { createTorneo, emparejamientos } = require("./services/torneo.service");
+const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame} = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
@@ -25,8 +25,14 @@ io.on('connect',  (socket) => {
 
   socket.on('join',  async({ name, room, tipo }, callback) => {
     try {
-      const data = await joinGame({jugador: name, partida: room})
-      const { error, user } = addUser({ id: socket.id, name, room, orden: data.orden})
+      const dataPartida = await getTriunfo(room)
+      var data;
+      if (dataPartida.id_torneo === 'NO'){
+        data = await joinGame({jugador: name, partida: room})
+      }else{
+        data = await findPlayer({partida: room, jugador: name})
+      }
+      const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
       console.log(user)
       var maxPlayers = (tipo+1)*2
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
@@ -228,7 +234,7 @@ io.on('connect',  (socket) => {
     }
   })
 // Empieza codigo de los torneos
-  socket.on('joinTournament',  async({name, tournament, tipo, nTeams }, callback) => {
+  socket.on('joinTournament',  async({name, tournament, tipo, nTeams}, callback) => {
     try {
       maxPlayers = (tipo + 1)*nTeams
       const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
@@ -242,6 +248,22 @@ io.on('connect',  (socket) => {
       console.log(err)
     }
   });
+ /* FORMATO DE DATA
+  data = {
+    torneo: <nombre_torneo>,
+    fase: <nFase>,
+  }
+  */
+  socket.on('matchTournament',  async(data, callback) => {
+    try {
+      const dataMatches = await emparejamientos(data)
+      io.to(data.torneo).emit('matches', dataMatches);
+    }catch(err){
+      console.log(err)
+    }
+  });
+
+  //Fin del IO
 });
 
 server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));
