@@ -90,18 +90,47 @@ io.on('connect',  (socket) => {
   
   /* FORMATO DE DATA
   data = {
-    jugador: <username>,
     partida: <nombre_partida>,
-    nronda: <numero_ronda>,
-    carta: <carta_lanzada>
   }
   */
-  socket.on('pause', async (data, callback) => {
-    const dataPause = await pasueGame(data.partda);
+  socket.on('pausar', async (data, callback) => {
+    try{
+      const dataPause = await pasueGame({partida: data.partda, estado: 1});
 
-    io.to(user.room).emit('message', { user: user.name, text: message });
+      io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
+  
+      callback();
+    }catch(err){
+      console.log(err)
+    }
 
-    callback();
+  });
+  /* FORMATO DE DATA
+  data = {
+    partida: <nombre_partida>,
+  }
+  */
+  socket.on('reaudarPartida', async (data, callback) => {
+    try{
+      const dataPause = await pasueGame({partida: data.partda, estado: 0});
+      const dataPlayers = await findAllPlayers(data.partida)
+      for (u of dataPlayers){
+        //const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+        const dataPlayer = await findUser(u.jugador)
+        u['copas'] = dataPlayer.copas
+        u['f_perfil'] = dataPlayer.f_perfil
+        console.log(u)
+        socket.broadcast.to(data.partda).emit('RepartirCartas', {repartidas: u});
+        socket.emit('RepartirCartas', {repartidas: u});
+      }
+      const dataT = await getTriunfo(data.partida)
+      socket.broadcast.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+      socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+      io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });  
+      callback();
+    }catch(err){
+      console.log(err)
+    }
   });
 
   /* FORMATO DE DATA
