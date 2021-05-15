@@ -9,4 +9,20 @@ const findUser = (username) => {
     });
 }
 
-module.exports = {findUser};
+const sumarCopas = (usuario) => {
+  return axios
+    .put(http.URL_USUARIO_SUMAR + usuario)
+    .then(respone=> {
+      return respone.data;
+    });
+}
+
+const restarCopas = (usuario) => {
+  return axios
+    .put(http.URL_USUARIO_UPDATE + usuario)
+    .then(respone=> {
+      return respone.data;
+    });
+}
+
+module.exports = {findUser,sumarCopas,restarCopas};

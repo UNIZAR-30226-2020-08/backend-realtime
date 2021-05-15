@@ -6,7 +6,7 @@ const cors = require('cors');
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
-const { findUser } = require("./services/usuario.service");
+const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
 const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame} = require("./services/partida.service");
@@ -103,7 +103,6 @@ io.on('connect',  (socket) => {
     }catch(err){
       console.log(err)
     }
-
   });
   /* FORMATO DE DATA
   data = {
@@ -194,14 +193,40 @@ io.on('connect',  (socket) => {
   socket.on('finalizarPartida', async (data, callback) => {
     try {
       const dataPartida = await recuento(data.partida)
+      const dataPlayers = await findAllPlayers(data.partida)
       console.log(dataPartida);
       const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
       console.log(dataDelete)
-      if (dataPartida.puntos_e0 >= 101 | dataPartida.puntos_e1 >= 101){
+      if (dataPartida.puntos_e0 >= 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
                                                puntos_e1: dataPartida.puntos_e1 });
-        //Sumar a los ganadores
-        //Restar a los perdedores
+        
+        //Sumar a los ganadores Y restar a los perdedores
+        const dataJugadores = await findAllPlayers(data.partida)
+        var copas = {};
+        for (a of dataJugadores){
+          if (a.equipo === 0){
+            copas = sumarCopas(a.juagdor)
+          }else{
+            copas = restarCopas(a.juagdor)
+          }
+          io.to(data.partida).emit('copasActualizadas', copas)
+        }
+      }else if (dataPartida.puntos_e1 >= 101){
+        io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
+                                               puntos_e1: dataPartida.puntos_e1 });
+
+        //Sumar a los ganadores Y restar a los perdedores
+        const dataJugadores = await findAllPlayers(data.partida)
+        var copas = {};
+        for (a of dataJugadores){
+          if (a.equipo === 0){
+            copas = sumarCopas(a.juagdor)
+          }else{
+            copas = restarCopas(a.juagdor)
+          }
+          io.to(data.partida).emit('copasActualizadas', copas)
+        }
       }else{
         io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas'});
         const dataVueltas = await partidaVueltas(data)
