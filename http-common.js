@@ -30,4 +30,5 @@ module.exports = {
   URL_USUARIO_RESTAR: BASE_URL + "usuario/perderPartida/",
   URL_PARTICIPANTES_TORNEO_CREATE : BASE_URL + "participantes_torneo/",
   URL_PARTICIPANTES_TORNEO_DELETE: BASE_URL + "participantes_torneo/dropTournamentParticipants/",
+  URL_PARTIDA_JUEGA_IA: BASE_URL + "partida/juegaIA/",
 };

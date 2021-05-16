@@ -56,4 +56,14 @@ const pasueGame = (data) => {
     });
 };
 
-module.exports = { getTriunfo, cambiar7, cantar, partidaVueltas,recuento, pasueGame};
+const juegaIA = (data) => {
+  return axios
+    .put(http.URL_PARTIDA_JUEGA_IA + data.partida + '/' + data.carta)
+    .then(response => {
+      return response.data;
+    }).catch(err =>{
+      console.log(err);
+    });
+};
+
+module.exports = { getTriunfo, cambiar7, cantar, partidaVueltas,recuento, pasueGame, juegaIA};

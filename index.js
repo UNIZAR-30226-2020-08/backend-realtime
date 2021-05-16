@@ -10,7 +10,7 @@ const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service"
 const { unirseTorneo,salirTorneo } = require("./services/participa_torneo.service");
 const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
-const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame} = require("./services/partida.service");
+const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame,juegaIA} = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
 const router = require('./router');
 
@@ -97,7 +97,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('pausar', async (data, callback) => {
     try{
-      const dataPause = await pasueGame({partida: data.partda, estado: 1});
+      const dataPause = await pasueGame({partida: data.partida, estado: 1});
 
       io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
   
@@ -113,7 +113,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('reaudarPartida', async (data, callback) => {
     try{
-      const dataPause = await pasueGame({partida: data.partda, estado: 0});
+      const dataPause = await pasueGame({partida: data.partida, estado: 0});
       const dataPlayers = await findAllPlayers(data.partida)
       for (u of dataPlayers){
         //const dataC = await repartirCartas({partida: u.room, jugador: u.name})
@@ -121,7 +121,7 @@ io.on('connect',  (socket) => {
         u['copas'] = dataPlayer.copas
         u['f_perfil'] = dataPlayer.f_perfil
         console.log(u)
-        socket.broadcast.to(data.partda).emit('RepartirCartas', {repartidas: u});
+        socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: u});
         socket.emit('RepartirCartas', {repartidas: u});
       }
       const dataT = await getTriunfo(data.partida)
@@ -185,6 +185,30 @@ io.on('connect',  (socket) => {
     io.to(data.partida).emit('winner', {winner: dataWinner.jugador});
     io.to(data.partida).emit('puntos', {puntos_e0: dataPuntos.puntos_e0, puntos_e1: dataPuntos.puntos_e1});
     callback();
+  });
+
+  /* FORMATO DE DATA
+  data = {
+    partida: <nombre_partida>,
+    carta: <carta_rival>,
+    nronda: <ronda>
+  }
+  */
+  socket.on('lanzarCartaIA', async (data, callback) => {
+    try{
+      const dataWinner = await getRoundWinner({nronda: (data.nronda - 1), partida: data.partida})
+      if (dataWinner.jugador === 'IA'){
+        const dataCante = await cantar({nombre: data.partida, jugador: 'IA'})
+        io.to(data.partida).emit('cante', dataCante);
+        const dataCambio = await cambiar7({nombre: data.partida, jugador: 'IA'})
+        io.to(data.partida).emit('cartaCambio', {tuya: dataCambio});
+      }
+      const dataIA = await juegaIA(data)
+      io.to(data.partida).emit('cartaJugada', dataIA);
+      callback();
+    }catch(err){
+      console.log(err)
+    }
   });
 
     /* FORMATO DE DATA
@@ -335,7 +359,7 @@ io.on('connect',  (socket) => {
  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
-    fase: <nFase>,
+    ronda: <nFase>,
   }
   */
   socket.on('matchTournament',  async(data, callback) => {
