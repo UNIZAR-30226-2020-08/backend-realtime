@@ -230,7 +230,8 @@ io.on('connect',  (socket) => {
           io.to(data.partida).emit('copasActualizadas', copas)
         }
       }else{
-        io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas'});
+        io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas',puntos_e0: dataPartida.puntos_e0, 
+          puntos_e1: dataPartida.puntos_e1 });
         const dataVueltas = await partidaVueltas(data)
         console.log(dataVueltas)
         //Se reparte de nuevo
