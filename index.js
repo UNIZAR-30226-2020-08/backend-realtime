@@ -239,7 +239,7 @@ io.on('connect',  (socket) => {
       }
       const dataIA = await juegaIA(data)
       console.log(dataIA)
-      socket.emit('cartaJugada', dataIA);
+      socket.emit('cartaJugadaIA', dataIA);
       callback();
     }catch(err){
       console.log(err)
