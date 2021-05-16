@@ -2,7 +2,8 @@ const players = [];
 
 const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
   maxPlayers = (tipo + 1)*nTeams
-  if (players.length < maxPlayers){
+  const usersInT = getUsersInTournamet(tournament)
+  if (usersInT.length < maxPlayers){
     name = name.trim().toLowerCase();
     tournament = tournament.trim().toLowerCase();
 
@@ -15,7 +16,7 @@ const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
 
     players.push(player);
 
-    return { player, nPlayers: players.length };
+    return { player, nPlayers: usersInT.length };
   }else{
     return { error: 'torneo completo' };
   }
