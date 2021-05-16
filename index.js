@@ -314,10 +314,10 @@ io.on('connect',  (socket) => {
       if(error) return callback(error);
       const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       console.log('se ha insertado en la bd ', dataJoin)
-      io.to(player.tournament).emit('joinedT', {player});
+      io.to(tournament).emit('joinedT', {player});
       if ((nPlayers + 1) === maxPlayers){
         console.log('Se envia completo', nPlayers)
-        io.to(player.tournament).emit('completo', {message: `torneo ${tournament} completo`});
+        io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
       }
       callback();
     }catch(err){
