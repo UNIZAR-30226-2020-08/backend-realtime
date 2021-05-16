@@ -34,15 +34,15 @@ io.on('connect',  (socket) => {
         data = await findPlayer({partida: room, jugador: name})
       }
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
-      console.log(user)
-      var maxPlayers = (tipo+1)*2
-      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
-      
       if(error) return callback(error);
-  
+      //console.log(user)
+      
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    
       socket.join(user.room);
       socket.emit('orden', data.orden);
-      console.log(`Tu orden es : ${data.orden}`)
+      //console.log(`Tu orden es : ${data.orden}`)
+      var maxPlayers = (tipo+1)*2
       if (data.orden === maxPlayers){
         for (u of getUsersInRoom(user.room)){
           const dataC = await repartirCartas({partida: u.room, jugador: u.name})
@@ -299,28 +299,32 @@ io.on('connect',  (socket) => {
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     }
   })
-// Empieza codigo de los torneos
-     /* FORMATO DE DATA
+
+
+// EMPIEZA CODIGO DE LOS TORNEOS 
+  
+
+/* FORMATO DE DATA
   data = {
     name: <username>,
     tournament: <nombre_partida>,
     tipo: <tipo>,
     nTeams: <nEquipos>
-  }
-  */
+  }*/
   socket.on('joinTournament',  async({name, tournament, tipo, nTeams}, callback) => {
     try {
-      maxPlayers = (tipo + 1)*nTeams
+      var maxPlayers = (tipo + 1)* nTeams
       const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
+      socket.join(player.tournament);
       console.log('Entra al torneo ', player, nPlayers)
       if(error) return callback(error);
       const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       console.log('se ha insertado en la bd ', dataJoin)
       console.log('el mesaje se envia a ', player.id)
-      io.to(player.id).emit('joinedT', {player});
-      if ((nPlayers + 1) === maxPlayers){
+      io.to(tournament).emit('joinedT', {player});
+      if (nPlayers === maxPlayers){
         console.log('Se envia completo', nPlayers)
-        io.to(player.id).emit('completo', {message: `torneo ${tournament} completo`});
+        io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
       }
       callback();
     }catch(err){

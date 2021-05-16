@@ -16,7 +16,7 @@ const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
 
     players.push(player);
 
-    return { player, nPlayers: usersInT.length };
+    return { player, nPlayers: (usersInT.length  + 1)  };
   }else{
     return { error: 'torneo completo' };
   }
