@@ -310,12 +310,13 @@ io.on('connect',  (socket) => {
     try {
       maxPlayers = (tipo + 1)*nTeams
       const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
-      console.log('Entra al torneo ', player)
+      console.log('Entra al torneo ', player, nPlayers)
       if(error) return callback(error);
       const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       console.log('se ha insertado en la bd ', dataJoin)
       io.to(player.tournament).emit('joinedT', {player});
       if (nPlayers === maxPlayers){
+        console.log('Se envia completo', nPlayers)
         io.to(player.tournament).emit('completo', {message: `torneo ${tournament} completo`});
       }
       callback();
@@ -323,7 +324,7 @@ io.on('connect',  (socket) => {
       console.log(err)
     }
   });
-  
+
  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
