@@ -50,6 +50,7 @@ io.on('connect',  (socket) => {
           dataC['copas'] = dataPlayer.copas
           dataC['f_perfil'] = dataPlayer.f_perfil
           console.log(dataC)
+          console.log('user.room es: ',user.room)
           socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
           socket.emit('RepartirCartas', {repartidas: dataC});
         }
@@ -314,6 +315,7 @@ io.on('connect',  (socket) => {
       if(error) return callback(error);
       const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       console.log('se ha insertado en la bd ', dataJoin)
+      console.log('el mesaje se envia a ', tournament)
       io.to(tournament).emit('joinedT', {player});
       if ((nPlayers + 1) === maxPlayers){
         console.log('Se envia completo', nPlayers)
