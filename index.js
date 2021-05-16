@@ -335,6 +335,7 @@ io.on('connect',  (socket) => {
     try {
       const dataMatches = await emparejamientos(data)
       io.to(data.torneo).emit('matches', dataMatches);
+      callback();
     }catch(err){
       console.log(err)
     }
