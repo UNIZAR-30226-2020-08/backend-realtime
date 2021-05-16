@@ -28,4 +28,6 @@ module.exports = {
   URL_PARTIDA_UPDATE: BASE_URL + "partida/updateGame/",
   URL_USUARIO_SUMAR: BASE_URL + "usuario/ganarPartida/",
   URL_USUARIO_RESTAR: BASE_URL + "usuario/perderPartida/",
+  URL_PARTICIPANTES_TORNEO_CREATE : BASE_URL + "participantes_torneo/",
+  URL_PARTICIPANTES_TORNEO_DELETE: BASE_URL + "participantes_torneo/dropTournamentParticipants/",
 };

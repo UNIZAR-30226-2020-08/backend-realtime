@@ -7,6 +7,7 @@ const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require(
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
+const { unirseTorneo,salirTorneo } = require("./services/participa_torneo.service");
 const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame} = require("./services/partida.service");
@@ -297,11 +298,22 @@ io.on('connect',  (socket) => {
     }
   })
 // Empieza codigo de los torneos
+     /* FORMATO DE DATA
+  data = {
+    name: <username>,
+    tournament: <nombre_partida>,
+    tipo: <tipo>,
+    nTeams: <nEquipos>
+  }
+  */
   socket.on('joinTournament',  async({name, tournament, tipo, nTeams}, callback) => {
     try {
       maxPlayers = (tipo + 1)*nTeams
       const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
+      console.log('Entra al torneo ', player)
       if(error) return callback(error);
+      const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
+      console.log('se ha insertado en la bd ', dataJoin)
       io.to(player.tournament).emit('joinedT', {player});
       if (nPlayers === maxPlayers){
         io.to(player.tournament).emit('completo', {message: `torneo ${tournament} completo`});
@@ -311,6 +323,7 @@ io.on('connect',  (socket) => {
       console.log(err)
     }
   });
+  
  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
