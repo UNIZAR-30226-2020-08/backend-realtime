@@ -315,7 +315,7 @@ io.on('connect',  (socket) => {
       const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       console.log('se ha insertado en la bd ', dataJoin)
       io.to(player.tournament).emit('joinedT', {player});
-      if (nPlayers === maxPlayers){
+      if ((nPlayers + 1) === maxPlayers){
         console.log('Se envia completo', nPlayers)
         io.to(player.tournament).emit('completo', {message: `torneo ${tournament} completo`});
       }
