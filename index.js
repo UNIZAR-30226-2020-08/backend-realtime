@@ -23,7 +23,36 @@ app.use(router);
 
 io.on('connect',  (socket) => {
   //console.log(socket);
+  socket.on('joinPartidaIA',  async({ name, room, tipo }, callback) => {
+    try {
+      const data = await joinGame({jugador: name, partida: room})
+      const dataIA = await joinGame({jugador: 'IA', partida: room})
+      const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
+      if(error) return callback(error);
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    
+      socket.join(user.room);
+      socket.emit('orden', data.orden);
+      //Se reparte al usuario 
+      const dataC = await repartirCartas({partida: u.room, jugador: u.name})
+      const dataPlayer = await findUser(u.name)
+      dataC['copas'] = dataPlayer.copas
+      dataC['f_perfil'] = dataPlayer.f_perfil
+      console.log(dataC)
+      console.log('user.room es: ',user.room)
+      socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
+      socket.emit('RepartirCartas', {repartidas: dataC});
+      //Se reparte a la IA
+      const dataC = await repartirCartas({partida: u.room, jugador: 'IA'})
 
+      const dataT = await getTriunfo(user.room)
+      socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+      socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+      socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
+    }catch(err){
+      console.log(err)
+    }
+  });
   socket.on('join',  async({ name, room, tipo }, callback) => {
     try {
       const dataPartida = await getTriunfo(room)
