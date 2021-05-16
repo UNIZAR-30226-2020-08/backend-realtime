@@ -225,18 +225,21 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCartaIA', async (data, callback) => {
     try{
+      const dataJug =  getUsersInRoom(data.partida)
+      const toEmit = dataJug[0].id
+      console.log('socket ID: ',toEmit)
       if (data.nronda > 0){
         const dataWinner = await getRoundWinner({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
           const dataCante = await cantar({nombre: data.partida, jugador: 'IA'})
-          io.to(data.partida).emit('cante', dataCante);
+          io.to(toEmit).emit('cante', dataCante);
           const dataCambio = await cambiar7({nombre: data.partida, jugador: 'IA'})
-          io.to(data.partida).emit('cartaCambio', {tuya: dataCambio});
+          io.to(toEmit).emit('cartaCambio', {tuya: dataCambio});
         }
       }
       const dataIA = await juegaIA(data)
       console.log(dataIA)
-      io.to(data.partida).emit('cartaJugada', dataIA);
+      io.to(toEmit).emit('cartaJugada', dataIA);
       callback();
     }catch(err){
       console.log(err)
