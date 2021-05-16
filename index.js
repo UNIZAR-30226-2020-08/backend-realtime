@@ -34,8 +34,8 @@ io.on('connect',  (socket) => {
       socket.join(user.room);
       socket.emit('orden', data.orden);
       //Se reparte al usuario 
-      const dataC = await repartirCartas({partida: u.room, jugador: u.name})
-      const dataPlayer = await findUser(u.name)
+      const dataC = await repartirCartas({partida: user.room, jugador: user.name})
+      const dataPlayer = await findUser(user.name)
       dataC['copas'] = dataPlayer.copas
       dataC['f_perfil'] = dataPlayer.f_perfil
       console.log(dataC)
@@ -43,7 +43,7 @@ io.on('connect',  (socket) => {
       socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
       socket.emit('RepartirCartas', {repartidas: dataC});
       //Se reparte a la IA
-      const dataC_IA = await repartirCartas({partida: u.room, jugador: 'IA'})
+      const dataC_IA = await repartirCartas({partida: user.room, jugador: 'IA'})
 
       const dataT = await getTriunfo(user.room)
       socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
