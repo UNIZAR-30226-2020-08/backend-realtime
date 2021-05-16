@@ -3,7 +3,7 @@ const players = [];
 const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
   maxPlayers = (tipo + 1)*nTeams
   const usersInT = getUsersInTournamet(tournament)
-  if ((usersInT.length + 1) < maxPlayers){
+  if ((usersInT.length) < maxPlayers){
     name = name.trim().toLowerCase();
     tournament = tournament.trim().toLowerCase();
 
