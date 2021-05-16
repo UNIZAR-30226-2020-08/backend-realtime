@@ -232,14 +232,14 @@ io.on('connect',  (socket) => {
         const dataWinner = await getRoundWinner({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
           const dataCante = await cantar({nombre: data.partida, jugador: 'IA'})
-          io.to(toEmit).emit('cante', dataCante);
+          socket.emit('cante', dataCante);
           const dataCambio = await cambiar7({nombre: data.partida, jugador: 'IA'})
-          io.to(toEmit).emit('cartaCambio', {tuya: dataCambio});
+          socket.emit('cartaCambio', {tuya: dataCambio});
         }
       }
       const dataIA = await juegaIA(data)
       console.log(dataIA)
-      io.to(toEmit).emit('cartaJugada', dataIA);
+      socket.emit('cartaJugada', dataIA);
       callback();
     }catch(err){
       console.log(err)
