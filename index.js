@@ -43,7 +43,7 @@ io.on('connect',  (socket) => {
       socket.broadcast.to(user.room).emit('RepartirCartas', {repartidas: dataC});
       socket.emit('RepartirCartas', {repartidas: dataC});
       //Se reparte a la IA
-      const dataC = await repartirCartas({partida: u.room, jugador: 'IA'})
+      const dataC_IA = await repartirCartas({partida: u.room, jugador: 'IA'})
 
       const dataT = await getTriunfo(user.room)
       socket.broadcast.to(user.room).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
