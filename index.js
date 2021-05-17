@@ -3,7 +3,7 @@ const express = require('express');
 const socketio = require('socket.io');
 const cors = require('cors');
 
-const { addUser, removeUser, getUser, getUsersInRoom, getUserByName } = require('./users');
+const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarPartida, reanudarPartida } = require('./users');
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
@@ -123,14 +123,17 @@ io.on('connect',  (socket) => {
   /* FORMATO DE DATA
   data = {
     partida: <nombre_partida>,
+    usuario: <nombre_usuario>,
+    tipo: <tipo_partida>
   }
   */
   socket.on('pausar', async (data, callback) => {
     try{
-      const dataPause = await pasueGame({partida: data.partida, estado: 1});
-
-      io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
-  
+      const pausar = pausarPartida(data);
+      if (pausar === 'PAUSA'){
+        const dataPause = await pasueGame({partida: data.partida, estado: 1});
+        io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
+      }
       callback();
     }catch(err){
       console.log(err)
@@ -157,7 +160,7 @@ io.on('connect',  (socket) => {
       const dataT = await getTriunfo(data.partida)
       socket.broadcast.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
       socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
-      io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });  
+      
       callback();
     }catch(err){
       console.log(err)
@@ -190,12 +193,12 @@ io.on('connect',  (socket) => {
   */
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
-    console.log(orden);
+    console.log('EL ORDEN ES: ',orden);
     for (u of orden){
       data['jugador'] = u;
       //console.log(data);
       const dataRob = await robarCarta(data)
-      console.log('Robar Carta',dataRob);
+      console.log('Robar Carta', dataRob);
       io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
     }
     callback();
@@ -240,7 +243,15 @@ io.on('connect',  (socket) => {
         }
       }
       const dataIA = await juegaIA(data)
-      console.log(dataIA)
+
+      var data2Write = {
+        jugador: 'IA',
+        partida: data.partida,
+        nronda: data.nronda,
+        carta: dataIA.carta
+      }
+      const dataPlay = await jugarCarta(data2Write)
+      console.log(dataPlay)
       console.log(data.partida)
       io.to(data.partida).emit('cartaJugadaIA', dataIA);
       //socket.emit('cartaJugadaIA', dataIA);
@@ -354,7 +365,7 @@ io.on('connect',  (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('leavePartida', () => {
     const user = removeUser(socket.id);
 
     if(user) {
@@ -362,6 +373,8 @@ io.on('connect',  (socket) => {
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     }
   })
+
+  socket.on('disconnect', () => {})
 
 
 // EMPIEZA CODIGO DE LOS TORNEOS 
