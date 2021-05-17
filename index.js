@@ -242,7 +242,7 @@ io.on('connect',  (socket) => {
       console.log(dataIA)
       console.log(data.partida)
       io.to(data.partida).emit('cartaJugadaIA', dataIA);
-      io.to(data.partida).emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
+      io.to(data.partida).emit('message', { user: 'Las10últimas', text: "Vamos españa"});
       //socket.emit('cartaJugadaIA', dataIA);
       callback();
     }catch(err){
