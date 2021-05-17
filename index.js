@@ -240,7 +240,8 @@ io.on('connect',  (socket) => {
       }
       const dataIA = await juegaIA(data)
       console.log(dataIA)
-      socket.emit('cartaJugadaIA', dataIA);
+      socket.broadcast.to(data.partida).emit('cartaJugadaIA', dataIA);
+      //socket.emit('cartaJugadaIA', dataIA);
       callback();
     }catch(err){
       console.log(err)
