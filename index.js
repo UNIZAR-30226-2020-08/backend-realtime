@@ -190,7 +190,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
-    //console.log(orden);
+    console.log(orden);
     for (u of orden){
       data['jugador'] = u;
       //console.log(data);
