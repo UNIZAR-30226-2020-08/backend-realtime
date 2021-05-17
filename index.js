@@ -354,7 +354,7 @@ io.on('connect',  (socket) => {
     }
   });
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async(callback) => {
     const user = removeUser(socket.id);
 
     console.log("usuario desconectado "+user)
@@ -362,6 +362,7 @@ io.on('connect',  (socket) => {
       io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     }
+    callback();
   })
 
 
