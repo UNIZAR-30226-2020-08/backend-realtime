@@ -29,6 +29,7 @@ io.on('connect',  (socket) => {
       const dataIA = await joinGame({jugador: 'IA', partida: room})
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
       if(error) return callback(error);
+      console.log('Socket ID de join IA: ', user.id)
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     
       socket.join(user.room);
