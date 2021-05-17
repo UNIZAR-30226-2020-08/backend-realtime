@@ -241,7 +241,8 @@ io.on('connect',  (socket) => {
       const dataIA = await juegaIA(data)
       console.log(dataIA)
       console.log(data.partida)
-      socket.broadcast.to(data.partida).emit('cartaJugadaIA', dataIA);
+      io.to(data.partida).emit('cartaJugadaIA', dataIA);
+      io.to(data.partida).emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
       //socket.emit('cartaJugadaIA', dataIA);
       callback();
     }catch(err){
