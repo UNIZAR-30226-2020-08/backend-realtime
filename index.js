@@ -208,6 +208,7 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('contarPuntos', async (data, callback) => {
+    console.log(data)
     const dataWinner = await getRoundWinner(data)
     const dataPuntos = await getTriunfo(data.partida)
     console.log('Contar Puntos', dataWinner);
