@@ -13,7 +13,8 @@ const addUser = ({ id, name, room, orden }) => {
   const user = { id, name, room, orden};
 
   users.push(user);
-  prRequest.push({})
+  //0 es no pausado
+  prRequest.push({room,name,pausado:0})
 
   return { user };
 }
@@ -36,8 +37,9 @@ const getUsersInRoom = (room) => users.filter((user) => user.room === room);
 //}
 const pausarPartida = (data) => {
   var maxPlayers = (data.tipo + 1) * 2
-  pausadas.push(data)
-  var vec = pausadas.filter(({partida,usuario}) => partida === data.partida);
+  var index = prRequest.findIndex(({partida,usuario,pausado}) => ((partida === data.partida) && (usuario === data.usuario)));
+  prRequest[index].pausado=1;
+  var vec = prRequest.filter(({partida,usuario,pausado}) => ((partida === data.partida) && (pausado==1)));
   console.log('el numero de pausas aceptadas es: ',vec)
   if (vec.length === maxPlayers){
     return 'PAUSA'
@@ -53,8 +55,9 @@ const pausarPartida = (data) => {
 //}
 const reanudarPartida = (data) => {
   var maxPlayers = (data.tipo + 1) * 2
-  pausadas.push(data)
-  var vec = pausadas.find(({partida,usuario}) => partida === data.partida);
+  var index = prRequest.findIndex(({partida,usuario,pausado}) => ((partida === data.partida) && (usuario === data.usuario)));
+  prRequest[index].pausado=0;
+  var vec = prRequest.filter(({partida,usuario,pausado}) => ((partida === data.partida) && (pausado==0)));
   console.log('el numero de pausas aceptadas es: ',vec)
   if (vec.length === maxPlayers){
     return 'SE REANUDA'
