@@ -179,7 +179,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCarta', async (data, callback) => {
     const dataPlay = await jugarCarta(data)
-    console.log(dataPlay.cartaJugada);
+    //console.log(dataPlay.cartaJugada);
     const uId = await getUser(data.jugador);
     io.to(uId).emit('jugada', {mano: dataPlay.mano});
     io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
@@ -200,7 +200,7 @@ io.on('connect',  (socket) => {
       data['jugador'] = u;
       //console.log(data);
       const dataRob = await robarCarta(data)
-      console.log('Robar Carta', dataRob);
+      //console.log('Robar Carta', dataRob);
       io.to(data.partida).emit('roba', {carta: dataRob.carta, jugador: dataRob.jugador});
     }
     callback();
@@ -234,7 +234,7 @@ io.on('connect',  (socket) => {
     try{
       const dataJug =  getUsersInRoom(data.partida)
       const toEmit = dataJug[0].id
-      console.log('socket ID: ',toEmit)
+      //console.log('socket ID: ',toEmit)
       if (data.nronda > 0){
         const dataWinner = await getRoundWinnerIA({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
@@ -257,8 +257,8 @@ io.on('connect',  (socket) => {
         carta: dataIA.carta
       }
       const dataPlay = await jugarCarta(data2Write)
-      console.log(dataPlay)
-      console.log(data.partida)
+      //console.log(dataPlay)
+      //console.log(data.partida)
       io.to(data.partida).emit('cartaJugadaIA', dataIA);
       //socket.emit('cartaJugadaIA', dataIA);
       callback();
@@ -278,7 +278,7 @@ io.on('connect',  (socket) => {
       console.log('DATA RECUENTO', dataPartida )
       //const dataPlayers = await findAllPlayers(data.partida)
       const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
-      console.log(dataDelete)
+      //console.log(dataDelete)
       if (dataPartida.puntos_e0 >= 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
                                                puntos_e1: dataPartida.puntos_e1 });
@@ -302,7 +302,7 @@ io.on('connect',  (socket) => {
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         for (a of dataJugadores){
-          console.log('EL EQUIPO', a.equipo)
+          //console.log('EL EQUIPO', a.equipo)
           if (a.equipo === 1){
             copas = await sumarCopas(a.jugador)
           }else{
@@ -314,7 +314,7 @@ io.on('connect',  (socket) => {
         io.to(data.partida).emit('Vueltas', {mensaje: 'Se juega de vueltas',puntos_e0: dataPartida.puntos_e0, 
           puntos_e1: dataPartida.puntos_e1 });
         const dataVueltas = await partidaVueltas(data)
-        console.log(dataVueltas)
+        //console.log(dataVueltas)
         //Se reparte de nuevo
         const dataJugadores = await findAllPlayers(data.partida)
         for (u of dataJugadores){
@@ -322,7 +322,7 @@ io.on('connect',  (socket) => {
           const dataPlayer = await findUser(u.jugador)
           dataC['copas'] = dataPlayer.copas
           dataC['f_perfil'] = dataPlayer.f_perfil
-          console.log(dataC)
+          //console.log(dataC)
           socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: dataC});
           socket.emit('RepartirCartas', {repartidas: dataC});
         }
