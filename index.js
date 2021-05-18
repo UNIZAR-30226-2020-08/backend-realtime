@@ -28,7 +28,7 @@ io.on('connect',  (socket) => {
       const data = await joinGame({jugador: name, partida: room})
       const dataIA = await joinGame({jugador: 'IA', partida: room})
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
-      //const { error, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
+      const { error, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
       if(error) return callback(error);
       console.log('Socket ID de join IA: ', user.id)
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
@@ -275,7 +275,7 @@ io.on('connect',  (socket) => {
     try {
       const dataPartida = await recuento(data.partida)
       console.log('DATA RECUENTO', dataPartida )
-      const dataPlayers = await findAllPlayers(data.partida)
+      //const dataPlayers = await findAllPlayers(data.partida)
       const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
       console.log(dataDelete)
       if (dataPartida.puntos_e0 >= 101){
