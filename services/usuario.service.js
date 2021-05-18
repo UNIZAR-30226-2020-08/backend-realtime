@@ -19,7 +19,7 @@ const sumarCopas = (usuario) => {
 
 const restarCopas = (usuario) => {
   return axios
-    .put(http.URL_USUARIO_UPDATE + usuario)
+    .put(http.URL_USUARIO_RESTAR + usuario)
     .then(respone=> {
       return respone.data;
     });

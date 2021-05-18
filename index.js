@@ -300,6 +300,7 @@ io.on('connect',  (socket) => {
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         for (a of dataJugadores){
+          console.log('EL EQUIPO', a.equipo)
           if (a.equipo === 1){
             copas = await sumarCopas(a.juagdor)
           }else{
