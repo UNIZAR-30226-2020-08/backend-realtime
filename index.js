@@ -273,8 +273,8 @@ io.on('connect',  (socket) => {
   socket.on('finalizarPartida', async (data, callback) => {
     try {
       const dataPartida = await recuento(data.partida)
+      console.log('DATA RECUENTO', dataPartida )
       const dataPlayers = await findAllPlayers(data.partida)
-      console.log(dataPartida);
       const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
       console.log(dataDelete)
       if (dataPartida.puntos_e0 >= 101){
