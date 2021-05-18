@@ -245,6 +245,7 @@ io.on('connect',  (socket) => {
           }
         }
       }
+      console.log('DATA DE ANDRES', data)
       const dataIA = await juegaIA(data)
       console.log('EL DATA IA', dataIA)
       var data2Write = {
