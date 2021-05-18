@@ -285,9 +285,9 @@ io.on('connect',  (socket) => {
         var copas = {};
         for (a of dataJugadores){
           if (a.equipo === 0){
-            copas = sumarCopas(a.juagdor)
+            copas = await sumarCopas(a.juagdor)
           }else{
-            copas = restarCopas(a.juagdor)
+            copas = await restarCopas(a.juagdor)
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
@@ -300,9 +300,9 @@ io.on('connect',  (socket) => {
         var copas = {};
         for (a of dataJugadores){
           if (a.equipo === 0){
-            copas = sumarCopas(a.juagdor)
+            copas = await sumarCopas(a.juagdor)
           }else{
-            copas = restarCopas(a.juagdor)
+            copas = await restarCopas(a.juagdor)
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
