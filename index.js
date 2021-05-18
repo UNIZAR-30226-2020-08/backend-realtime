@@ -246,7 +246,7 @@ io.on('connect',  (socket) => {
         }
       }
       const dataIA = await juegaIA(data)
-
+      console.log('EL DATA IA', dataIA)
       var data2Write = {
         jugador: 'IA',
         partida: data.partida,
