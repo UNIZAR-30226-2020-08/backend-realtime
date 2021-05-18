@@ -132,6 +132,7 @@ io.on('connect',  (socket) => {
   socket.on('pausar', async (data, callback) => {
     try{
       const pausar = pausarPartida(data);
+      console.log('El PAUSE: ', pausar )
       if (pausar === 'PAUSA'){
         const dataPause = await pasueGame({partida: data.partida, estado: 1});
         io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
