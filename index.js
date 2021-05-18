@@ -26,11 +26,11 @@ io.on('connect',  (socket) => {
   socket.on('joinPartidaIA',  async({ name, room, tipo }, callback) => {
     try {
       const data = await joinGame({jugador: name, partida: room})
-      //const dataIA = await joinGame({jugador: 'IA', partida: room})
+      const dataIA = await joinGame({jugador: 'IA', partida: room})
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
-      const { error1, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
+      //const { error1, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
       if(error) return callback(error);
-      if(error1) return callback(error1);
+      //if(error1) return callback(error1);
       console.log('Socket ID de join IA: ', user.id)
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     
