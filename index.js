@@ -300,7 +300,7 @@ io.on('connect',  (socket) => {
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         for (a of dataJugadores){
-          if (a.equipo === 0){
+          if (a.equipo === 1){
             copas = await sumarCopas(a.juagdor)
           }else{
             copas = await restarCopas(a.juagdor)
