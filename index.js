@@ -316,9 +316,10 @@ io.on('connect',  (socket) => {
         const dataVueltas = await partidaVueltas(data)
         console.log(dataVueltas)
         //Se reparte de nuevo
-        for (u of getUsersInRoom(data.partida)){
-          const dataC = await repartirCartas({partida: u.room, jugador: u.name})
-          const dataPlayer = await findUser(u.name)
+        const dataJugadores = await findAllPlayers(data.partida)
+        for (u of dataJugadores){
+          const dataC = await repartirCartas({partida: u.partida, jugador: u.jugador})
+          const dataPlayer = await findUser(u.jugador)
           dataC['copas'] = dataPlayer.copas
           dataC['f_perfil'] = dataPlayer.f_perfil
           console.log(dataC)
