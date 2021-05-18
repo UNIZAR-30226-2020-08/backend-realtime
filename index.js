@@ -28,6 +28,7 @@ io.on('connect',  (socket) => {
       const data = await joinGame({jugador: name, partida: room})
       const dataIA = await joinGame({jugador: 'IA', partida: room})
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
+      //const { error, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
       if(error) return callback(error);
       console.log('Socket ID de join IA: ', user.id)
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
@@ -178,7 +179,7 @@ io.on('connect',  (socket) => {
   socket.on('lanzarCarta', async (data, callback) => {
     const dataPlay = await jugarCarta(data)
     console.log(dataPlay.cartaJugada);
-    const uId = await getUser(data.juagdor);
+    const uId = await getUser(data.jugador);
     io.to(uId).emit('jugada', {mano: dataPlay.mano});
     io.to(data.partida).emit('cartaJugada', {cartaJugada: dataPlay.cartaJugada.carta, 
                                               jugador: dataPlay.cartaJugada.jugador});
@@ -286,9 +287,9 @@ io.on('connect',  (socket) => {
         var copas = {};
         for (a of dataJugadores){
           if (a.equipo === 0){
-            copas = await sumarCopas(a.juagdor)
+            copas = await sumarCopas(a.jugador)
           }else{
-            copas = await restarCopas(a.juagdor)
+            copas = await restarCopas(a.jugador)
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
@@ -302,9 +303,9 @@ io.on('connect',  (socket) => {
         for (a of dataJugadores){
           console.log('EL EQUIPO', a.equipo)
           if (a.equipo === 1){
-            copas = await sumarCopas(a.juagdor)
+            copas = await sumarCopas(a.jugador)
           }else{
-            copas = await restarCopas(a.juagdor)
+            copas = await restarCopas(a.jugador)
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
@@ -342,7 +343,7 @@ io.on('connect',  (socket) => {
     try{
       const dataCambio = await cambiar7(data)
       console.log(dataCambio);
-      //const uId = await getUserByName(data.juagdor);
+      //const uId = await getUserByName(data.jugador);
       io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
       callback();
     }catch(err){
@@ -361,7 +362,7 @@ io.on('connect',  (socket) => {
     try{
       const dataCante = await cantar(data)
       console.log(dataCante);
-      //const uId = await getUserByName(data.juagdor);
+      //const uId = await getUserByName(data.jugador);
       //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
       io.to(data.nombre).emit('cante', dataCante);
       callback();
