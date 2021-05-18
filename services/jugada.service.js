@@ -47,4 +47,15 @@ const findLastRound = (data) => {
     });
 };
 
-module.exports = { jugarCarta, getRoundWinner, getRoundOrder, findLastRound};
+const getRoundWinnerIA = (data) => {
+  return axios
+    .get(http.URL_JUGADA_GANADOR_RONDA + data.nronda + '/' + data.partida)
+    .then(response => {
+      return response.data;
+    })
+    .catch(err =>{
+      console.log(err)
+    });
+};
+
+module.exports = { jugarCarta, getRoundWinner, getRoundOrder, findLastRound, getRoundWinnerIA};

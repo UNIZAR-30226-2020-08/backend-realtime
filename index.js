@@ -11,7 +11,7 @@ const { unirseTorneo,salirTorneo } = require("./services/participa_torneo.servic
 const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame,juegaIA} = require("./services/partida.service");
-const { jugarCarta, getRoundWinner, getRoundOrder } = require("./services/jugada.service");
+const { jugarCarta, getRoundWinner, getRoundOrder,findLastRound, getRoundWinnerIA } = require("./services/jugada.service");
 const router = require('./router');
 
 const app = express();
@@ -234,12 +234,15 @@ io.on('connect',  (socket) => {
       const toEmit = dataJug[0].id
       console.log('socket ID: ',toEmit)
       if (data.nronda > 0){
-        const dataWinner = await getRoundWinner({nronda: (data.nronda - 1), partida: data.partida})
+        const dataWinner = await getRoundWinnerIA({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
           const dataCante = await cantar({nombre: data.partida, jugador: 'IA'})
           socket.emit('cante', dataCante);
-          const dataCambio = await cambiar7({nombre: data.partida, jugador: 'IA'})
-          socket.emit('cartaCambio', {tuya: dataCambio});
+          const dataPartida = await getTriunfo(data.partida)
+          if(dataPartida.triunfo[1] > 6 || dataPartida.triunfo[1] === '0' || dataPartida.triunfo[1] === '2' ){
+            const dataCambio = await cambiar7({nombre: data.partida, jugador: 'IA'})
+            socket.emit('cartaCambio', {tuya: dataCambio});
+          }
         }
       }
       const dataIA = await juegaIA(data)
