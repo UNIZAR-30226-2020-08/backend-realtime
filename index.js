@@ -485,11 +485,11 @@ io.on('connect',  (socket) => {
           io.to(user.room).emit('copasActualizadas', copas)
         }
     }
-    const user = removeUser(socket.id);
+    const user2 = removeUser(socket.id);
 
-    if(user) {
-      io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
-      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    if(user2) {
+      io.to(user2.room).emit('message', { user: 'Las10últimas', text: `${user2.name} abandonó la partida.` });
+      io.to(user2.room).emit('roomData', { room: user2.room, users: getUsersInRoom(user2.room)});
     }
   })
 
