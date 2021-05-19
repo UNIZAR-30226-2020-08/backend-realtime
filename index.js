@@ -458,7 +458,7 @@ io.on('connect',  (socket) => {
   socket.on('disconnect', async () => {
     try {
       const user = getUser(socket.id);
-      if (user.room){
+      if (user){
         const dataPartida = await getTriunfo(user.room)
         console.log(dataPartida)
         if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado == 0){
