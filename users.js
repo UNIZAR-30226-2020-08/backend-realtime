@@ -56,6 +56,7 @@ const pausarPartida = (data) => {
 const reanudarPartida = (data) => {
   var maxPlayers = (data.tipo + 1) * 2
   var index = prRequest.findIndex(({partida,usuario,pausado}) => ((partida === data.partida) && (usuario === data.usuario)));
+  console.log('PR REQUEST', prRequest[index])
   prRequest[index].pausado = 0;
   var vec = prRequest.filter(({partida,usuario,pausado}) => ((partida === data.partida) && (pausado == 0)));
   console.log('el numero de pausas aceptadas es: ',vec)
