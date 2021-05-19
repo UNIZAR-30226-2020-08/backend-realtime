@@ -407,7 +407,7 @@ io.on('connect',  (socket) => {
           //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
         }
-        
+        console.log('DATA ACTUALIZADA', dataActualizada)
         io.to(data.partida).emit('Resultado', {puntos_e0: dataActualizada.puntos_e0, 
           puntos_e1: dataActualizada.puntos_e1 });
         for (a of dataJugadores){
