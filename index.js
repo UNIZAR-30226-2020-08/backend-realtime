@@ -407,10 +407,13 @@ io.on('connect',  (socket) => {
           //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
         }
-        console.log('DATA ACTUALIZADA', dataActualizada)
-        io.to(data.partida).emit('Resultado', {puntos_e0: dataActualizada.puntos_e0, 
-          puntos_e1: dataActualizada.puntos_e1 });
-        for (a of dataJugadores){
+        const data2send = await getTriunfo(data.partida)
+        console.log('DATA 2 SEND', data2send)
+        
+        io.to(data.partida).emit('Resultado', {puntos_e0: data2send.puntos_e0, 
+          puntos_e1: data2send.puntos_e1 });
+        
+          for (a of dataJugadores){
           if (a.equipo === miJugador.equipo){
             copas = await restarCopas(a.jugador)
           }else{
