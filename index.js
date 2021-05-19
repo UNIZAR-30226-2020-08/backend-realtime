@@ -406,7 +406,7 @@ io.on('connect',  (socket) => {
     */
   socket.on('leavePartida', async (data) => {
     console.log(`${data.jugador} HA ABANDONADO LA PARTIDA`)
-    const dataPartida = await recuento(data.partida)
+    const dataPartida = await getTriunfo(data.partida)
     console.log(dataPartida)
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101 && dataPartida.estado == 0){
         const dataJugadores = await findAllPlayers(data.partida)
@@ -456,7 +456,7 @@ io.on('connect',  (socket) => {
   socket.on('disconnect', async () => {
     const user=getUser(socket.id);
 
-    const dataPartida = await recuento(user.room)
+    const dataPartida = await getTriunfo(user.room)
     console.log(dataPartida)
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado == 0){
         const dataJugadores = await findAllPlayers(user.room)
