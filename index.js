@@ -286,6 +286,8 @@ io.on('connect',  (socket) => {
     try {
       const dataPartida = await recuento(data.partida)
       console.log('DATA RECUENTO', dataPartida )
+      console.log('RESULTADO Y VUELTAS', {puntos_e0: dataPartida.puntos_e0, 
+        puntos_e1: dataPartida.puntos_e1 } )
       //const dataPlayers = await findAllPlayers(data.partida)
       const dataDelete = await deleteCard({partida: data.partida, carta: 'NO'})
       //console.log(dataDelete)
