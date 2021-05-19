@@ -153,7 +153,7 @@ io.on('connect',  (socket) => {
     try{
       const msgReanudar = reanudarPartida(data)
       console.log('MSG REANUDACION',msgReanudar)
-      //socket.join(user.room)
+      socket.join(user.room)
       if(msgReanudar === "SE REANUDA"){
         const dataT = await getTriunfo(data.partida)
         socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
