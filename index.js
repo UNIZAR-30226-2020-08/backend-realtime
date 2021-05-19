@@ -397,24 +397,24 @@ io.on('connect',  (socket) => {
         console.log(` MI JUGADOR `, miJugador.equipo)
         var dataActualizada = {}
         if(miJugador.equipo === 0){
-          console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
-          //NO PAUSA EL JUEGO 
-          //ES UN Partida.update
-          dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
-        }else if(miJugador.equipo === 1){
-          console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
+          console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
           //NO PAUSA EL JUEGO 
           //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 0,puntos_e1: 101})
+        }else if(miJugador.equipo === 1){
+          console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
+          //NO PAUSA EL JUEGO 
+          //ES UN Partida.update
+          dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
         }
         
         io.to(data.partida).emit('Resultado', {puntos_e0: dataActualizada.puntos_e0, 
           puntos_e1: dataActualizada.puntos_e1 });
         for (a of dataJugadores){
           if (a.equipo === miJugador.equipo){
-            copas = await sumarCopas(a.jugador)
-          }else{
             copas = await restarCopas(a.jugador)
+          }else{
+            copas = await sumarCopas(a.jugador)
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
