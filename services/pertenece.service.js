@@ -45,4 +45,12 @@ const findPlayer = (data) => {
       return response.data;
     });
 }
-module.exports = { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer};
+//:partida/:jugador
+const deletePlayer = (data) => {
+  return axios
+    .delete(http.URL_PERTENECE_DELETE + data.partida + '/' + data.jugador)
+    .then(response => {
+      return response.data;
+    });
+}
+module.exports = { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer};

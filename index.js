@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarPartida, reanudarPartida } = require('./users');
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
-const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer } = require("./services/pertenece.service");
+const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
 const { unirseTorneo,salirTorneo } = require("./services/participa_torneo.service");
 const { emparejamientos } = require("./services/torneo.service");
@@ -27,6 +27,7 @@ io.on('connect',  (socket) => {
     try {
       const data = await joinGame({jugador: name, partida: room})
       const dataIA = await joinGame({jugador: 'IA', partida: room})
+      const dataPlay = await pasueGame({partida: room, estado: 0});
       const { error, user } = addUser({id: socket.id, name, room, orden: data.orden})
       //const { error1, userIA } = addUser({name:'IA', room, orden: (data.orden + 1)})
       if(error) return callback(error);
@@ -76,6 +77,7 @@ io.on('connect',  (socket) => {
       //console.log(`Tu orden es : ${data.orden}`)
       var maxPlayers = (tipo+1)*2
       if (data.orden === maxPlayers){
+        const dataPlay = await pasueGame({partida: room, estado: 0});
         for (u of getUsersInRoom(user.room)){
           const dataC = await repartirCartas({partida: u.room, jugador: u.name})
           const dataPlayer = await findUser(u.name)
@@ -406,7 +408,7 @@ io.on('connect',  (socket) => {
     console.log(`${data.jugador} HA ABANDONADO LA PARTIDA`)
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101 && dataPartida.estado==1){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101 && dataPartida.estado == 0){
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         var miJugador = dataJugadores.find((e) => (data.jugador === e.jugador));
@@ -437,7 +439,10 @@ io.on('connect',  (socket) => {
           }
           io.to(data.partida).emit('copasActualizadas', copas)
         }
+    }else if (dataPartida.estado === 2){
+      const dataDelete = await deletePlayer({partida: data.partida, jugador: data.jugador})
     }
+    
     const user = removeUser(socket.id);
 
     if(user) {
