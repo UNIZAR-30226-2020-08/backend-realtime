@@ -449,13 +449,14 @@ io.on('connect',  (socket) => {
   })
 
   socket.on('disconnect', async () => {
-    var user=getUser(socket.id);
+    const user=getUser(socket.id);
 
     const dataPartida = await recuento(user.room)
     console.log(dataPartida)
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
         const dataJugadores = await findAllPlayers(user.partida)
         var copas = {};
+        console.log(dataJugadores)
         var miJugador = dataJugadores.find((e) => (user.name === e.jugador));
         console.log(` MI JUGADOR `, miJugador.equipo)
         var dataActualizada = {}
