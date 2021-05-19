@@ -151,7 +151,8 @@ io.on('connect',  (socket) => {
   */
   socket.on('reaudarPartida', async (data, callback) => {
     try{
-      if(reanudarPartida({partida:data.partida,usuario:data.usuario,tipo:data.partida})=== "SE REANUDA"){
+      const msgReanudar = reanudarPartida({partida:data.partida,usuario:data.usuario,tipo:data.partida})
+      if(msgReanudar === "SE REANUDA"){
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
         const dataPlayers = await findAllPlayers(data.partida)
         for (u of dataPlayers){

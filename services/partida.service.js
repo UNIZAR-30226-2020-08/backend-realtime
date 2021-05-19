@@ -48,7 +48,7 @@ const recuento = (data) => {
 
 const pasueGame = (data) => {
   return axios
-    .put(http.URL_PARTIDA_UPDATE + data.partida)
+    .put(http.URL_PARTIDA_UPDATE + data.partida, data)
     .then(response => {
       return response.data;
     }).catch(err =>{
