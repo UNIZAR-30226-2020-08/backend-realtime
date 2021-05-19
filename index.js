@@ -406,7 +406,7 @@ io.on('connect',  (socket) => {
     console.log(`${data.jugador} HA ABANDONADO LA PARTIDA`)
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101 && dataPartida.estado==1){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101 && dataPartida.estado==0){
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         var miJugador = dataJugadores.find((e) => (data.jugador === e.jugador));
@@ -453,7 +453,7 @@ io.on('connect',  (socket) => {
 
     const dataPartida = await recuento(user.room)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado==1){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado==0){
         const dataJugadores = await findAllPlayers(user.room)
         var copas = {};
         console.log(dataJugadores)
