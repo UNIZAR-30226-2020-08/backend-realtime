@@ -38,7 +38,7 @@ const getRoundWinner = (data) => {
 
 const findLastRound = (data) => {
   return axios
-    .put(http.URL_JUGADA_ULTIMA_RONDA  + data.partida)
+    .get(http.URL_JUGADA_ULTIMA_RONDA  + data.partida)
     .then(response => {
       return response.data;
     })
