@@ -491,7 +491,7 @@ io.on('connect',  (socket) => {
           io.to(user.room).emit('copasActualizadas', copas)
         }
     }else if (dataPartida.estado === 2){
-        const dataDelete = await deletePlayer({partida: data.partida, jugador: data.jugador})
+        const dataDelete = await deletePlayer({partida: user.room, jugador: user.name})
     }
     const user2 = removeUser(socket.id);
 
