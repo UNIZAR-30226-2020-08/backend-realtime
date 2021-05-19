@@ -156,7 +156,7 @@ io.on('connect',  (socket) => {
       //socket.join(user.room)
       if(msgReanudar === "SE REANUDA"){
         //const lastRound = await findLastRound(data)
-        //const dataLastRound = getRoundWinnerIA(lastRound)
+        //const dataLastRound = getRoundWinnerIA({nronda: lastround.nronda,partida:data.partida})
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
         const dataPlayers = await findAllPlayers(data.partida)
         for (u of dataPlayers){
