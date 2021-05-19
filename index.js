@@ -385,6 +385,15 @@ io.on('connect',  (socket) => {
     }
   });
 
+  socket.on('leavePartidaRP', async (data) => {
+    const user = removeUser(socket.id);
+
+    if(user) {
+      io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    }
+  })
+
      /* FORMATO DE DATA
     data = {
     jugador: <username>,
