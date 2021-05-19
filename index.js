@@ -155,6 +155,9 @@ io.on('connect',  (socket) => {
       console.log('MSG REANUDACION',msgReanudar)
       //socket.join(user.room)
       if(msgReanudar === "SE REANUDA"){
+        const dataT = await getTriunfo(data.partida)
+        socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
+        socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
         const lastRound = await findLastRound(data)
         const dataLastRound = getRoundWinnerIA({nronda: lastround.nronda,partida:data.partida})
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
@@ -168,11 +171,7 @@ io.on('connect',  (socket) => {
           socket.broadcast.to(data.partida).emit('RepartirCartasRP', {repartidas: u});
           socket.emit('RepartirCartasRP', {repartidas: u});
         }
-        const dataT = await getTriunfo(data.partida)
-        socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
-        socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
       }
-      
       callback();
     }catch(err){
       console.log(err)
