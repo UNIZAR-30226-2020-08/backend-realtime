@@ -393,7 +393,7 @@ io.on('connect',  (socket) => {
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
-        var miJugador = dataJugadores.filter((e) => (data.jugador === e.jugador));
+        var miJugador = dataJugadores.find((e) => (data.jugador === e.jugador));
         console.log(` MI JUGADOR `, miJugador.equipo)
         var dataActualizada = {}
         if(miJugador.equipo === '0'){
