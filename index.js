@@ -387,19 +387,24 @@ io.on('connect',  (socket) => {
     }
     */
   socket.on('leavePartida', async (data) => {
-
+    console.log(`${data.jugador} HA ABANDONADO LA PARTIDA`)
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         var miJugador = dataJugadores.filter((e) => (data.jugador === e.jugador));
-        //NO PAUSA EL JUEGO 
-        //ES UN Partida.update
-        var dataActualizada= {}
+        console.log(` MI JUGADOR `, miJugador)
+        var dataActualizada = {}
         if(miJugador.equipo === 0){
+          console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
+          //NO PAUSA EL JUEGO 
+          //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
         }else if(miJugador.equipo === 1){
+          console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
+          //NO PAUSA EL JUEGO 
+          //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 0,puntos_e1: 101})
         }
         
