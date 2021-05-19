@@ -380,13 +380,38 @@ io.on('connect',  (socket) => {
     }
   });
 
-  socket.on('leavePartida', () => {
+  socket.on('leavePartida', (data) => {
+
+    const dataPartida = await recuento(data.partida)
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e0 < 101){
+        io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
+          puntos_e1: dataPartida.puntos_e1 });
+
+        const dataJugadores = await findAllPlayers(data.partida)
+        var copas = {};
+        var miJugador=dataJugadores.filter((e) => (data.name === e.jugador));
+        
+        for (a of dataJugadores){
+          if (a.equipo === miJugador.equipo){
+            copas = await sumarCopas(a.jugador)
+          }else{
+            copas = await restarCopas(a.jugador)
+          }
+          io.to(data.partida).emit('copasActualizadas', copas)
+        }
+    }
+
+
     const user = removeUser(socket.id);
+
+
 
     if(user) {
       io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
       io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
     }
+
+
   })
 
   socket.on('disconnect', () => {})
