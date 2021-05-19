@@ -448,7 +448,7 @@ io.on('connect',  (socket) => {
 
   })
 
-  socket.on('disconnect', () => {
+  socket.on('disconnect', async () => {
     var user=getUser(socket.id);
 
     const dataPartida = await recuento(user.room)
