@@ -458,7 +458,7 @@ io.on('connect',  (socket) => {
 
     const dataPartida = await recuento(user.room)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado==1){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado==0){
         const dataJugadores = await findAllPlayers(user.room)
         var copas = {};
         console.log(dataJugadores)
