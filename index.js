@@ -156,7 +156,8 @@ io.on('connect',  (socket) => {
       socket.join(data.partida)
       if(msgReanudar === "SE REANUDA"){
         const lastRound = await findLastRound(data)
-        const dataLastRound = getRoundWinnerIA({nronda: lastRound.nronda,partida:data.partida})
+        console.log(lastRound)
+        const dataLastRound = await getRoundWinnerIA({nronda: lastRound.nronda,partida:data.partida})
         const dataT = await getTriunfo(data.partida)
         socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, winner:dataLastRound.jugador});
         socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, winner:dataLastRound.jugador});
