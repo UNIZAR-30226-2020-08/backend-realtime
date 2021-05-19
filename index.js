@@ -448,7 +448,50 @@ io.on('connect',  (socket) => {
 
   })
 
-  socket.on('disconnect', () => {})
+  socket.on('disconnect', () => {
+    var user=getUser(socket.id);
+
+    const dataPartida = await recuento(user.room)
+    console.log(dataPartida)
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
+        const dataJugadores = await findAllPlayers(user.partida)
+        var copas = {};
+        var miJugador = dataJugadores.find((e) => (user.name === e.jugador));
+        console.log(` MI JUGADOR `, miJugador.equipo)
+        var dataActualizada = {}
+        if(miJugador.equipo === 0){
+          console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
+          //NO PAUSA EL JUEGO 
+          //ES UN Partida.update
+          dataActualizada = await pasueGame({partida: user.room, puntos_e0: 0,puntos_e1: 101})
+        }else if(miJugador.equipo === 1){
+          console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
+          //NO PAUSA EL JUEGO 
+          //ES UN Partida.update
+          dataActualizada = await pasueGame({partida: user.room, puntos_e0: 101,puntos_e1: 0})
+        }
+        const data2send = await getTriunfo(user.room)
+        console.log('DATA 2 SEND', data2send)
+        
+        io.to(user.room).emit('Resultado', {puntos_e0: data2send.puntos_e0, 
+          puntos_e1: data2send.puntos_e1 });
+        
+          for (a of dataJugadores){
+          if (a.equipo === miJugador.equipo){
+            copas = await restarCopas(a.jugador)
+          }else{
+            copas = await sumarCopas(a.jugador)
+          }
+          io.to(user.room).emit('copasActualizadas', copas)
+        }
+    }
+    const user = removeUser(socket.id);
+
+    if(user) {
+      io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
+      io.to(user.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+    }
+  })
 
 
 // EMPIEZA CODIGO DE LOS TORNEOS 
