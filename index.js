@@ -151,7 +151,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('reanudarPartida', async (data, callback) => {
     try{
-      const msgReanudar = reanudarPartida({partida:data.partida,usuario:data.usuario,tipo:data.partida})
+      const msgReanudar = reanudarPartida(data)
       console.log('MSG REANUDACION',msgReanudar)
       if(msgReanudar === "SE REANUDA"){
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
