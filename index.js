@@ -384,7 +384,7 @@ io.on('connect',  (socket) => {
 
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e0 < 101){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
           puntos_e1: dataPartida.puntos_e1 });
 
