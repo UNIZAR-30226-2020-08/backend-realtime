@@ -153,7 +153,10 @@ io.on('connect',  (socket) => {
     try{
       const msgReanudar = reanudarPartida(data)
       console.log('MSG REANUDACION',msgReanudar)
+      //socket.join(user.room)
       if(msgReanudar === "SE REANUDA"){
+        //const lastRound = await findLastRound(data)
+        //const dataLastRound = getRoundWinnerIA(lastRound)
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
         const dataPlayers = await findAllPlayers(data.partida)
         for (u of dataPlayers){
