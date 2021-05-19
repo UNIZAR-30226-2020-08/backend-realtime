@@ -380,6 +380,12 @@ io.on('connect',  (socket) => {
     }
   });
 
+     /* FORMATO DE DATA
+    data = {
+    jugador: <username>,
+    partida: <nombre_partida>,
+    }
+    */
   socket.on('leavePartida', async (data) => {
 
     const dataPartida = await recuento(data.partida)
@@ -390,7 +396,7 @@ io.on('connect',  (socket) => {
 
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
-        var miJugador=dataJugadores.filter((e) => (data.name === e.jugador));
+        var miJugador=dataJugadores.filter((e) => (data.jugador === e.jugador));
 
         for (a of dataJugadores){
           if (a.equipo === miJugador.equipo){
