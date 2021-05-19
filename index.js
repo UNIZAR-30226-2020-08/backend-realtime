@@ -391,13 +391,20 @@ io.on('connect',  (socket) => {
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
     if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101){
-        io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
-          puntos_e1: dataPartida.puntos_e1 });
-
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
-        var miJugador=dataJugadores.filter((e) => (data.jugador === e.jugador));
-
+        var miJugador = dataJugadores.filter((e) => (data.jugador === e.jugador));
+        //NO PAUSA EL JUEGO 
+        //ES UN Partida.update
+        var dataActualizada= {}
+        if(miJugador.equipo === 0){
+          dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
+        }else if(miJugador.equipo === 1){
+          dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 0,puntos_e1: 101})
+        }
+        
+        io.to(data.partida).emit('Resultado', {puntos_e0: dataActualizada.puntos_e0, 
+          puntos_e1: dataActualizada.puntos_e1 });
         for (a of dataJugadores){
           if (a.equipo === miJugador.equipo){
             copas = await sumarCopas(a.jugador)
@@ -407,11 +414,7 @@ io.on('connect',  (socket) => {
           io.to(data.partida).emit('copasActualizadas', copas)
         }
     }
-
-
     const user = removeUser(socket.id);
-
-
 
     if(user) {
       io.to(user.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
