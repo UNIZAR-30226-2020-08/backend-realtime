@@ -394,14 +394,14 @@ io.on('connect',  (socket) => {
         const dataJugadores = await findAllPlayers(data.partida)
         var copas = {};
         var miJugador = dataJugadores.filter((e) => (data.jugador === e.jugador));
-        console.log(` MI JUGADOR `, miJugador)
+        console.log(` MI JUGADOR `, miJugador.equipo)
         var dataActualizada = {}
-        if(miJugador.equipo.toString() === '0'){
+        if(miJugador.equipo === '0'){
           console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
           //NO PAUSA EL JUEGO 
           //ES UN Partida.update
           dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
-        }else if(miJugador.equipo.toString() === '1'){
+        }else if(miJugador.equipo === '1'){
           console.log(` HA GANADO EL EQUIPO ${miJugador.equipo}`)
           //NO PAUSA EL JUEGO 
           //ES UN Partida.update
