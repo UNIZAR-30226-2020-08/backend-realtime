@@ -155,8 +155,8 @@ io.on('connect',  (socket) => {
       console.log('MSG REANUDACION',msgReanudar)
       //socket.join(user.room)
       if(msgReanudar === "SE REANUDA"){
-        //const lastRound = await findLastRound(data)
-        //const dataLastRound = getRoundWinnerIA({nronda: lastround.nronda,partida:data.partida})
+        const lastRound = await findLastRound(data)
+        const dataLastRound = getRoundWinnerIA({nronda: lastround.nronda,partida:data.partida})
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
         const dataPlayers = await findAllPlayers(data.partida)
         for (u of dataPlayers){
@@ -165,12 +165,12 @@ io.on('connect',  (socket) => {
           u['copas'] = dataPlayer.copas
           u['f_perfil'] = dataPlayer.f_perfil
           console.log(u)
-          socket.broadcast.to(data.partida).emit('RepartirCartas', {repartidas: u});
-          socket.emit('RepartirCartas', {repartidas: u});
+          socket.broadcast.to(data.partida).emit('RepartirCartasRP', {repartidas: u});
+          socket.emit('RepartirCartasRP', {repartidas: u});
         }
         const dataT = await getTriunfo(data.partida)
-        socket.broadcast.to(data.partida).emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
-        socket.emit('RepartirTriunfo', {triunfoRepartido: dataT.triunfo});
+        socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
+        socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastround.nronda, winner:dataLastRound.jugador});
       }
       
       callback();
