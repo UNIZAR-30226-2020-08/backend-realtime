@@ -54,6 +54,7 @@ const pausarPartida = (data) => {
 //  tipo: <tipo_partida>
 //}
 const reanudarPartida = (data) => {
+  console.log('EL DATA', data)
   var maxPlayers = (data.tipo + 1) * 2
   console.log('MAX PLAYERS ',maxPlayers)
   var index = prRequest.findIndex(({partida,usuario,pausado}) => ((partida === data.partida) && (usuario === data.usuario)));

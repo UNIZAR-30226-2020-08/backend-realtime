@@ -149,7 +149,7 @@ io.on('connect',  (socket) => {
     tipo: <tipo>
   }
   */
-  socket.on('reaudarPartida', async (data, callback) => {
+  socket.on('reanudarPartida', async (data, callback) => {
     try{
       const msgReanudar = reanudarPartida({partida:data.partida,usuario:data.usuario,tipo:data.partida})
       console.log('MSG REANUDACION',msgReanudar)
