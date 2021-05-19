@@ -159,8 +159,10 @@ io.on('connect',  (socket) => {
         console.log(lastRound)
         const dataLastRound = await getRoundWinnerIA({nronda: lastRound.nronda,partida:data.partida})
         const dataT = await getTriunfo(data.partida)
-        socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, winner:dataLastRound.jugador});
-        socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, winner:dataLastRound.jugador});
+        socket.broadcast.to(data.partida).emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, 
+              winner:dataLastRound.jugador, puntos_e0: dataT.puntos_e0, puntos_e1: dataT.puntos_e1});
+        socket.emit('RepartirTriunfoRP', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, 
+              winner:dataLastRound.jugador, puntos_e0: dataT.puntos_e0, puntos_e1: dataT.puntos_e1});
         const dataPause = await pasueGame({partida: data.partida, estado: 0});
         const dataPlayers = await findAllPlayers(data.partida)
         for (u of dataPlayers){
