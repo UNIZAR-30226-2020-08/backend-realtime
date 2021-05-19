@@ -458,7 +458,7 @@ io.on('connect',  (socket) => {
 
     const dataPartida = await recuento(user.room)
     console.log(dataPartida)
-    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado==0){
+    if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado == 0){
         const dataJugadores = await findAllPlayers(user.room)
         var copas = {};
         console.log(dataJugadores)
@@ -490,6 +490,8 @@ io.on('connect',  (socket) => {
           }
           io.to(user.room).emit('copasActualizadas', copas)
         }
+    }else if (dataPartida.estado === 2){
+        const dataDelete = await deletePlayer({partida: data.partida, jugador: data.jugador})
     }
     const user2 = removeUser(socket.id);
 
