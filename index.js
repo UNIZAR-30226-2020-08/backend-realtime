@@ -385,7 +385,7 @@ io.on('connect',  (socket) => {
     }
   });
 
-  socket.on('leavePartidaRP', async (data) => {
+  socket.on('leavePartidaRP', async () => {
     const user = removeUser(socket.id);
 
     if(user) {
