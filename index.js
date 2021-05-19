@@ -380,7 +380,7 @@ io.on('connect',  (socket) => {
     }
   });
 
-  socket.on('leavePartida', (data) => {
+  socket.on('leavePartida', async (data) => {
 
     const dataPartida = await recuento(data.partida)
     console.log(dataPartida)
