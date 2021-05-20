@@ -387,7 +387,8 @@ io.on('connect',  (socket) => {
       console.log(dataCante);
       if (dataCante.length !== 0){
         for (c of dataCante){
-          const dataPlayer = findPlayer({partida: data.nombre, jugador: data.jugador})
+          const dataPlayer = await findPlayer({partida: data.nombre, jugador: data.jugador})
+          console.log('EL DATA PLAYER', dataPlayer)
           if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
             if (dataPlayer.equipo === 0){
               puntos = dataPartida.puntos_e0 + 40
