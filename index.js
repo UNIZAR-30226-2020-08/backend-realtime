@@ -611,10 +611,10 @@ io.on('connect',  (socket) => {
         io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
         //Se hacen los emparejamientos
         var dataMatches = {}
-        if (data.nTeams === 16){
-          dataMatches = await emparejamientos({torneo: data.tournamet, fase: 0})
-        }else if (data.nTeams === 8){
-          dataMatches = await emparejamientos({torneo: data.tournamet, fase: 1})
+        if (nTeams === 16){
+          dataMatches = await emparejamientos({torneo: tournament, fase: 0})
+        }else if (nTeams === 8){
+          dataMatches = await emparejamientos({torneo: tournament, fase: 1})
         }
         io.to(tournament).emit('matches', dataMatches);
       }
