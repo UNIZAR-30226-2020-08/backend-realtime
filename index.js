@@ -117,11 +117,15 @@ io.on('connect',  (socket) => {
   });
 
   socket.on('sendMessage', (message, callback) => {
-    const user = getUser(socket.id);
-
-    io.to(user.room).emit('message', { user: user.name, text: message });
-
-    callback();
+    try {
+      const user = getUser(socket.id);
+      if (user){
+        io.to(user.room).emit('message', { user: user.name, text: message });
+      }
+      callback();
+    }catch(err){
+      console.log(err)
+    }
   });
   
   /* FORMATO DE DATA
@@ -147,6 +151,7 @@ io.on('connect',  (socket) => {
       console.log(err)
     }
   });
+
   /* FORMATO DE DATA
   data = {
     partida: <nombre_partida>,
@@ -610,10 +615,14 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('enviarInvitacion',  async(data, callback) => {
-    console.log("Invitiacion a partida")
-    console.log(data)
-    io.emit('invitacionRecibida', data);
-    callback();
+    try{
+      console.log("Invitiacion a partida")
+      console.log(data)
+      io.emit('invitacionRecibida', data);
+      callback();
+    }catch(err){
+      console.log(err)
+    }
   });
 
   //Fin del IO
