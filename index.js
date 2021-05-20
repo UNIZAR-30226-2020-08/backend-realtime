@@ -391,18 +391,18 @@ io.on('connect',  (socket) => {
           if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
             if (dataPlayer.equipo === 0){
               puntos = dataPartida.puntos_e0 + 40
-              dataActualizada = await pasueGame({partida: data.partida, puntos_e0: puntos})
+              dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
             }else if (dataPlayer.equipo === 1){
               puntos = dataPartida.puntos_e1 + 40
-              dataActualizada = await pasueGame({partida: data.partida, puntos_e1: puntos})
+              dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
             }
           }else{
             if (dataPlayer.equipo === 0){
               puntos = dataPartida.puntos_e0 + 20
-              dataActualizada = await pasueGame({partida: data.partida, puntos_e0: puntos})
+              dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
             }else if (dataPlayer.equipo === 1){
               puntos = dataPartida.puntos_e1 + 20
-              dataActualizada = await pasueGame({partida: data.partida, puntos_e1: puntos})
+              dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
             }
           }
         }
