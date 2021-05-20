@@ -612,8 +612,10 @@ io.on('connect',  (socket) => {
         //Se hacen los emparejamientos
         var dataMatches = []
         if (nTeams === 16){
+          console.log('EL TORNEO ES DE 16')
           dataMatches = await emparejamientos({torneo: tournament, fase: 0})
         }else if (nTeams === 8){
+          console.log('EL TORNEO ES DE 8')
           dataMatches = await emparejamientos({torneo: tournament, fase: 1})
         }
         console.log('LOS MATCHES: ', dataMatches)
