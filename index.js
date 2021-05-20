@@ -598,6 +598,19 @@ io.on('connect',  (socket) => {
     }
   });
 
+  /* FORMATO DE DATA
+  data = {
+    username: <username_remitente>, 
+    nombre: <nombre_partida>, 
+    tipo: <tipo_partida>, 
+    destinatario: <username_destinatario>
+  }
+  */
+  socket.on('enviarInvitacion',  async(data, callback) => {
+    io.emit('invitacionRecibida', data);
+    callback();
+  });
+
   //Fin del IO
 });
 
