@@ -380,7 +380,32 @@ io.on('connect',  (socket) => {
   socket.on('cantar', async (data, callback) => {
     try{
       const dataCante = await cantar(data)
+      const dataPartida = await getTriunfo(data.partida)
+      var puntos
+      var dataActualizada
       console.log(dataCante);
+      if (dataCante.length !== 0){
+        for (c of dataCante){
+          const dataPlayer = findPlayer({partida: data.nombre, jugador: data.jugador})
+          if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
+            if (dataPlayer.equipo === 0){
+              puntos = dataPartida.puntos_e0 + 40
+              dataActualizada = await pasueGame({partida: data.partida, puntos_e0: puntos})
+            }else if (dataPlayer.equipo === 1){
+              puntos = dataPartida.puntos_e1 + 40
+              dataActualizada = await pasueGame({partida: data.partida, puntos_e1: puntos})
+            }
+          }else{
+            if (dataPlayer.equipo === 0){
+              puntos = dataPartida.puntos_e0 + 20
+              dataActualizada = await pasueGame({partida: data.partida, puntos_e0: puntos})
+            }else if (dataPlayer.equipo === 1){
+              puntos = dataPartida.puntos_e1 + 20
+              dataActualizada = await pasueGame({partida: data.partida, puntos_e1: puntos})
+            }
+          }
+        }
+      }
       //const uId = await getUserByName(data.jugador);
       //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
       io.to(data.nombre).emit('cante', dataCante);
