@@ -289,7 +289,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('finalizarPartida', async (data, callback) => {
     try {
-      const dataPartida = await recuento(data.partida)
+      const dataPartida = await getTriunfo(data.partida)
       console.log('DATA RECUENTO', dataPartida )
       console.log('RESULTADO Y VUELTAS', {puntos_e0: dataPartida.puntos_e0, 
         puntos_e1: dataPartida.puntos_e1 } )
