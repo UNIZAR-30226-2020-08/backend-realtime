@@ -607,6 +607,8 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('enviarInvitacion',  async(data, callback) => {
+    console.log("Invitiacion a partida")
+    console.log(data)
     io.emit('invitacionRecibida', data);
     callback();
   });
