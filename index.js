@@ -192,6 +192,7 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('lanzarCarta', async (data, callback) => {
+    console.log('LLAMA A CARTA JUGADA', data)
     const dataPlay = await jugarCarta(data)
     //console.log(dataPlay.cartaJugada);
     const uId = await getUser(data.jugador);
