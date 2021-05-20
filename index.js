@@ -380,7 +380,7 @@ io.on('connect',  (socket) => {
   socket.on('cantar', async (data, callback) => {
     try{
       const dataCante = await cantar(data)
-      const dataPartida = await getTriunfo(data.partida)
+      const dataPartida = await getTriunfo(data.nombre)
       console.log(dataPartida)
       var puntos
       var dataActualizada
