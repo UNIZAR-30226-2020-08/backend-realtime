@@ -450,7 +450,7 @@ io.on('connect',  (socket) => {
         const dataDelete = await deletePlayer({partida: data.partida, jugador: data.jugador})
       }
       
-      socket.leave(data.jugador)
+      socket.leave(data.partida)
       const user = removeUser(socket.id);
   
       if(user) {
@@ -504,7 +504,7 @@ io.on('connect',  (socket) => {
             const dataDelete = await deletePlayer({partida: user.room, jugador: user.name})
         }
 
-        socket.leave(user.name)
+        socket.leave(user.room)
         const user2 = removeUser(socket.id);
     
         if(user2) {
