@@ -9,4 +9,12 @@ const emparejamientos = (data) => {
     });  
 }
 
-module.exports = {emparejamientos};
+const updateCuadroTorneo = (data) => {
+  return axios
+    .put(http.URL_CUADRO_TORNEO_UPDATE + data.torneo + '/' + data.partida, data)
+    .then(respone=> {
+      return respone.data;
+    });  
+}
+
+module.exports = {emparejamientos, updateCuadroTorneo};

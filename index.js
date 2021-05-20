@@ -4,11 +4,11 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarPartida, reanudarPartida } = require('./users');
-const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
+const { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
 const { unirseTorneo, salirTorneo } = require("./services/participa_torneo.service");
-const { emparejamientos } = require("./services/torneo.service");
+const { emparejamientos, updateCuadroTorneo } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame,juegaIA} = require("./services/partida.service");
 const { jugarCarta, getRoundWinner, getRoundOrder,findLastRound, getRoundWinnerIA } = require("./services/jugada.service");
@@ -307,6 +307,10 @@ io.on('connect',  (socket) => {
       if (dataPartida.puntos_e0 >= 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
                                                puntos_e1: dataPartida.puntos_e1 });
+        if (dataPartida.id_torneo !== 'NO'){
+          const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                    partida: dataPartida.nombre, eq_winner: 0})
+        }                                       
         
         //Sumar a los ganadores Y restar a los perdedores
         const dataJugadores = await findAllPlayers(data.partida)
@@ -322,6 +326,10 @@ io.on('connect',  (socket) => {
       }else if (dataPartida.puntos_e1 >= 101){
         io.to(data.partida).emit('Resultado', {puntos_e0: dataPartida.puntos_e0, 
                                                puntos_e1: dataPartida.puntos_e1 });
+        if (dataPartida.id_torneo !== 'NO'){
+        const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                  partida: dataPartida.nombre, eq_winner: 1})
+        }  
 
         //Sumar a los ganadores Y restar a los perdedores
         const dataJugadores = await findAllPlayers(data.partida)
@@ -432,7 +440,9 @@ io.on('connect',  (socket) => {
   socket.on('leavePartidaRP', async () => {
     try {
       const userID = getUser(socket.id);
-      socket.leave(userID.room)
+      if (userID){
+        socket.leave(userID.room)
+      }
       
       const user = removeUser(socket.id);
       if(user) {
@@ -466,11 +476,19 @@ io.on('connect',  (socket) => {
             //NO PAUSA EL JUEGO 
             //ES UN Partida.update
             dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 0,puntos_e1: 101})
+            if (dataPartida.id_torneo !== 'NO'){
+              const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                        partida: dataPartida.nombre, eq_winner: 1})
+            }  
           }else if(miJugador.equipo === 1){
             console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
             //NO PAUSA EL JUEGO 
             //ES UN Partida.update
             dataActualizada = await pasueGame({partida: data.partida, puntos_e0: 101,puntos_e1: 0})
+            if (dataPartida.id_torneo !== 'NO'){
+              const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                        partida: dataPartida.nombre, eq_winner: 0})
+            }  
           }
           const data2send = await getTriunfo(data.partida)
           console.log('DATA 2 SEND', data2send)
@@ -507,7 +525,7 @@ io.on('connect',  (socket) => {
       const user = getUser(socket.id);
       if (user){
         const dataPartida = await getTriunfo(user.room)
-        console.log(dataPartida)
+        //console.log(dataPartida)
         if (dataPartida.puntos_e0 < 101 && dataPartida.puntos_e1 < 101  && dataPartida.estado == 0){
             const dataJugadores = await findAllPlayers(user.room)
             var copas = {};
@@ -520,11 +538,19 @@ io.on('connect',  (socket) => {
               //NO PAUSA EL JUEGO 
               //ES UN Partida.update
               dataActualizada = await pasueGame({partida: user.room, puntos_e0: 0,puntos_e1: 101})
+              if (dataPartida.id_torneo !== 'NO'){
+                const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                          partida: dataPartida.nombre, eq_winner: 1})
+              }  
             }else if(miJugador.equipo === 1){
               console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
               //NO PAUSA EL JUEGO 
               //ES UN Partida.update
               dataActualizada = await pasueGame({partida: user.room, puntos_e0: 101,puntos_e1: 0})
+              if (dataPartida.id_torneo !== 'NO'){
+                const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
+                          partida: dataPartida.nombre, eq_winner: 0})
+              }  
             }
             const data2send = await getTriunfo(user.room)
             console.log('DATA 2 SEND', data2send)
@@ -583,6 +609,14 @@ io.on('connect',  (socket) => {
       if (nPlayers === maxPlayers){
         console.log('Se envia completo', nPlayers)
         io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
+        //Se hacen los emparejamientos
+        var dataMatches = {}
+        if (data.nTeams === 16){
+          dataMatches = await emparejamientos({torneo: data.tournamet, fase: 0})
+        }else if (data.nTeams === 8){
+          dataMatches = await emparejamientos({torneo: data.tournamet, fase: 1})
+        }
+        io.to(tournament).emit('matches', dataMatches);
       }
       callback();
     }catch(err){
@@ -593,13 +627,18 @@ io.on('connect',  (socket) => {
  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
-    ronda: <nFase>,
+    fase: <nFase>,
   }
   */
-  socket.on('matchTournament',  async(data, callback) => {
+  socket.on('partidaTorneoFin',  async(data, callback) => {
     try {
-      const dataMatches = await emparejamientos(data)
-      io.to(data.torneo).emit('matches', dataMatches);
+      const dataFin = partidaFinalizada(data)
+
+      if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
+        const nextFase = data.fase + 1
+        const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase})
+        io.to(data.torneo).emit('matches', dataMatches);
+      }
       callback();
     }catch(err){
       console.log(err)

@@ -34,4 +34,5 @@ module.exports = {
   URL_PARTIDA_JUEGA_IA: BASE_URL + "partida/juegaIA/",
   URL_JUGADA_ULTIMA_RONDA: BASE_URL + "jugada/buscarUltimaRonda/",
   URL_PERTENECE_DELETE: BASE_URL + "pertenece/dropBelong/",
+  URL_CUADRO_TORNEO_UPDATE: BASE_URL + "cuadro_torneo/updateTournamentTable/",
 };
