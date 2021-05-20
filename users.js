@@ -47,7 +47,11 @@ const pausarPartida = (data) => {
   if (vec.length === maxPlayers){
     return 'PAUSA'
   }else{
-    return 'VOTO ANOTADO'
+    if (vec.length === 1){
+      return 'PRIMER VOTO ANOTADO'
+    }else{
+      return 'VOTO ANOTADO' 
+    }
   }
 }
 

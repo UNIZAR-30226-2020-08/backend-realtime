@@ -7,7 +7,7 @@ const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarParti
 const { addPlayer, removePlayer, getPlayer, getUsersInTournamet } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
-const { unirseTorneo,salirTorneo } = require("./services/participa_torneo.service");
+const { unirseTorneo, salirTorneo } = require("./services/participa_torneo.service");
 const { emparejamientos } = require("./services/torneo.service");
 const { deleteCard } = require("./services/carta_disponible.service");
 const { getTriunfo, cambiar7, cantar, partidaVueltas, recuento, pasueGame,juegaIA} = require("./services/partida.service");
@@ -135,6 +135,9 @@ io.on('connect',  (socket) => {
     try{
       const pausar = pausarPartida(data);
       console.log('El PAUSE: ', pausar )
+      if (pausar === 'PRIMER VOTO ANOTADO'){
+        io.to(data.partida).emit('pauseRequest', { pauseMessage: ` ${data.usuario} ha solicitado pausa` });
+      }
       if (pausar === 'PAUSA'){
         const dataPause = await pasueGame({partida: data.partida, estado: 1});
         io.to(data.partida).emit('pause', { pauseMessage: 'se ha pausado la partida' });
