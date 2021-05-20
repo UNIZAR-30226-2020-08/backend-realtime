@@ -14,7 +14,9 @@ const addUser = ({ id, name, room, orden }) => {
 
   users.push(user);
   //0 es no pausado
-  if(!existingUser){
+
+  const existingUserPR = prRequest.find((user) => user.partida === room && user.usuario === name);
+  if(!existingUserPR){
     prRequest.push({partida: room,usuario: name,pausado: 0})
   }
   return { user };
