@@ -381,6 +381,7 @@ io.on('connect',  (socket) => {
     try{
       const dataCante = await cantar(data)
       const dataPartida = await getTriunfo(data.partida)
+      console.log(dataPartida)
       var puntos
       var dataActualizada
       console.log(dataCante);
