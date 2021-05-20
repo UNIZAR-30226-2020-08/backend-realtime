@@ -3,7 +3,7 @@ const http = require ('../http-common');
 
 const emparejamientos = (data) => {
   return axios
-    .put(http.URL_TORNEO_EMPAREJAR + data.torneo + '/' + data.ronda)
+    .put(http.URL_TORNEO_EMPAREJAR + data.torneo + '/' + data.fase)
     .then(respone=> {
       return respone.data;
     });  
