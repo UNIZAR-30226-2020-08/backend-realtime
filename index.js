@@ -140,7 +140,7 @@ io.on('connect',  (socket) => {
       const pausar = pausarPartida(data);
       console.log('El PAUSE: ', pausar )
       if (pausar === 'PRIMER VOTO ANOTADO'){
-        io.to(data.partida).emit('pauseRequest', { pauseMessage: ` ${data.usuario} ha solicitado pausa` });
+        socket.broadcast.to(data.partida).emit('pauseRequest', { pauseMessage: ` ${data.usuario} ha solicitado pausa` });
       }
       if (pausar === 'PAUSA'){
         const dataPause = await pasueGame({partida: data.partida, estado: 1});
