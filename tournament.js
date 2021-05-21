@@ -32,6 +32,7 @@ const removePlayer = (data) => {
 
 const partidaFinalizada = (data) => {
   const fase = data.fase
+  console.log('LA FASE: ', fase)
   const torneo = data.torneo  
   var nPartidas = 0;
 
@@ -39,7 +40,7 @@ const partidaFinalizada = (data) => {
   else if(fase === 2){nPartidas=2}else if(fase === 3){nPartidas=1}
   console.log('NPARTIDAS: ', nPartidas)
   const partida = finalizadas.push(data)
-  const partidasAcabadas = finalizadas.filter((p) => (p.fase === fase) && (p.torneo === torneo))
+  const partidasAcabadas = finalizadas.filter((p) => ((p.fase === fase) && (p.torneo === torneo)))
   console.log('EL NUMERO DE PARTIDAS ACABADAS: ', partidasAcabadas.length)
   if (partidasAcabadas.length < nPartidas){
     return 'QUEDAN PARTIDAS POR ACABAR'

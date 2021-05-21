@@ -594,7 +594,7 @@ io.on('connect',  (socket) => {
       io.to(tournament).emit('joinedT', {player});
       if (nPlayers === maxPlayers){
         console.log('Se envia completo', nPlayers)
-        io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
+        //io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
         //Se hacen los emparejamientos
         var dataMatches
         if (nTeams === 16){
