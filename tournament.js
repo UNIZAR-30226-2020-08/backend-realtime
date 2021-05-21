@@ -39,9 +39,11 @@ const partidaFinalizada = (data) => {
   else if(fase === 2){nPartidas=2}else if(fase === 3){nPartidas=1}
   const partida = finalizadas.push(data)
   const partidasAcabadas = finalizadas.filter((p) => (p.fase === fase) && (p.torneo === torneo))
+  console.log('EL NUMERO DE PARTIDAS ACABADAS: ', partidasAcabadas.length)
   if (partidasAcabadas.length < nPartidas){
     return 'QUEDAN PARTIDAS POR ACABAR'
   }else if (partidasAcabadas.length === nPartidas){
+    console.log('TODAS ACABADAS')
     return 'TODAS ACABADAS'
   }
 };
