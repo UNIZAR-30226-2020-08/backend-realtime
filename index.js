@@ -269,6 +269,7 @@ io.on('connect',  (socket) => {
         const dataWinner = await getRoundWinnerIA({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
           const dataCante = await cantar({nombre: data.partida, jugador: 'IA'})
+          await sumarEnCante({nombre: data.partida, jugador: 'IA'},dataCante)
           socket.emit('cante', dataCante);
           const dataPartida = await getTriunfo(data.partida)
           if(dataPartida.triunfo[1] > 6 || dataPartida.triunfo[1] === '0' || dataPartida.triunfo[1] === '2' ){
@@ -403,38 +404,7 @@ io.on('connect',  (socket) => {
   socket.on('cantar', async (data, callback) => {
     try{
       const dataCante = await cantar(data)
-      const dataPartida = await getTriunfo(data.nombre)
-      console.log(dataPartida)
-      var puntos
-      var dataActualizada
-      console.log(dataCante);
-      if (dataCante.length !== 0){
-        for (c of dataCante){
-          const dataPlayer = await findPlayer({partida: data.nombre, jugador: data.jugador})
-          console.log('EL DATA PLAYER', dataPlayer)
-          if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
-            if (dataPlayer.equipo === 0){
-              puntos = dataPartida.puntos_e0 + 40
-              console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
-              dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
-            }else if (dataPlayer.equipo === 1){
-              puntos = dataPartida.puntos_e1 + 40
-              console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
-              dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
-            }
-          }else{
-            if (dataPlayer.equipo === 0){
-              puntos = dataPartida.puntos_e0 + 20
-              console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
-              dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
-            }else if (dataPlayer.equipo === 1){
-              puntos = dataPartida.puntos_e1 + 20
-              console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
-              dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
-            }
-          }
-        }
-      }
+      await sumarEnCante(data,dataCante)
       //const uId = await getUserByName(data.jugador);
       //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
       io.to(data.nombre).emit('cante', dataCante);
@@ -675,3 +645,38 @@ io.on('connect',  (socket) => {
 });
 
 server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`));
+
+const sumarEnCante = async (data,dataCante) => {
+  const dataPartida = await getTriunfo(data.nombre)
+  console.log(dataPartida)
+  var puntos
+  var dataActualizada
+  console.log(dataCante);
+  if (dataCante.length !== 0){
+    for (c of dataCante){
+      const dataPlayer = await findPlayer({partida: data.nombre, jugador: data.jugador})
+      console.log('EL DATA PLAYER', dataPlayer)
+      if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
+        if (dataPlayer.equipo === 0){
+          puntos = dataPartida.puntos_e0 + 40
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
+        }else if (dataPlayer.equipo === 1){
+          puntos = dataPartida.puntos_e1 + 40
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
+        }
+      }else{
+        if (dataPlayer.equipo === 0){
+          puntos = dataPartida.puntos_e0 + 20
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
+        }else if (dataPlayer.equipo === 1){
+          puntos = dataPartida.puntos_e1 + 20
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
+        }
+      }
+    }
+  }
+}
