@@ -633,7 +633,6 @@ io.on('connect',  (socket) => {
       }
       const dataSalir = await salirTorneo(data)
       const user = removePlayer({id: socket.id, tournament: data.torneo});
-      callback()
     }catch(err){
       console.log(err)
     }
