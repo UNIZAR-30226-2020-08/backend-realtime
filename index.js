@@ -638,6 +638,34 @@ io.on('connect',  (socket) => {
     }
   })
 
+    /* FORMATO DE DATA
+  data = {
+    torneo: <nombre_torneo>,
+    jugador: <username>,
+    partida: <partida>
+  }
+  */
+  socket.on('leaveTorneoEmpezado', async(data,callback) => {
+    try {
+      const userID = getPlayer(socket.id);
+      if (userID){
+        socket.leave(userID.room)
+      }
+      const dataPer = await findPlayer(data)
+      if (dataPer.equipo === 0){
+        const perdida = await pasueGame({partida: data.partida, puntos_e0: 0, puntos_e1: 101})
+        const dataCuadro = await updateCuadroTorneo({torneo: data.torneo, 
+          partida: data.partida, eq_winner: 1})
+      }else if (dataPer.equipo === 1){
+        const perdida = await pasueGame({partida: data.partida, puntos_e0: 101, puntos_e1: 0})
+        const dataCuadro = await updateCuadroTorneo({torneo: data.torneo, 
+          partida: data.partida, eq_winner: 0})
+      }
+    }catch(err){
+      console.log(err)
+    }
+  })
+
   /* FORMATO DE DATA
   data = {
     username: <username_remitente>, 
