@@ -649,7 +649,8 @@ server.listen(process.env.PORT || 5000, () => console.log(`Server has started.`)
 const sumarEnCante = async (data,dataCante) => {
   const dataPartida = await getTriunfo(data.nombre)
   console.log(dataPartida)
-  var puntos
+  var puntos_e0 = dataPartida.puntos_e0
+  var puntos_e1 = dataPartida.puntos_e1
   var dataActualizada
   console.log(dataCante);
   if (dataCante.length !== 0){
@@ -658,23 +659,23 @@ const sumarEnCante = async (data,dataCante) => {
       console.log('EL DATA PLAYER', dataPlayer)
       if (c.palo[0].toUpperCase() === dataPartida.triunfo[1]){
         if (dataPlayer.equipo === 0){
-          puntos = dataPartida.puntos_e0 + 40
-          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
-          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
+          puntos_e0 = puntos_e0 + 40
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos_e0})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos_e0})
         }else if (dataPlayer.equipo === 1){
-          puntos = dataPartida.puntos_e1 + 40
-          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
-          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
+          puntos_e1 = puntos_e1 + 40
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos_e1})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos_e1})
         }
       }else{
         if (dataPlayer.equipo === 0){
-          puntos = dataPartida.puntos_e0 + 20
-          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos})
-          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos})
+          puntos_e0 = puntos_e0 + 20
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e0: puntos_e0})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e0: puntos_e0})
         }else if (dataPlayer.equipo === 1){
-          puntos = dataPartida.puntos_e1 + 20
-          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos})
-          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos})
+          puntos_e1 = puntos_e1 + 20
+          console.log('SE SUMAN', {partida: data.nombre, puntos_e1: puntos_e1})
+          dataActualizada = await pasueGame({partida: data.nombre, puntos_e1: puntos_e1})
         }
       }
     }
