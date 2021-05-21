@@ -225,16 +225,6 @@ io.on('connect',  (socket) => {
   */
   socket.on('robarCarta', async (data, callback) => {
     const orden = await getRoundOrder(data);
-    const dataP = await getTriunfo(data.partida)
-    if ((dataP.tipo === 0) && (data.nronda === 19)){
-      console.log('INTENTA CAMBIAR EN LA ULTIMA RONDA: ', orden[0])
-      const dataCambio = await cambiar7({jugador: orden[0], nombre: data.partida})
-      io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
-    }else if ((dataP.tipo === 1) && (data.nronda === 9)){
-      console.log('INTENTA CAMBIAR EN LA ULTIMA RONDA: ', orden[0])
-      const dataCambio = await cambiar7({jugador: orden[0], nombre: data.partida})
-      io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
-    }
     console.log('EL ORDEN ES: ',orden);
     for (u of orden){
       data['jugador'] = u;
