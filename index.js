@@ -76,7 +76,8 @@ io.on('connect',  (socket) => {
       socket.emit('orden', data.orden);
       //console.log(`Tu orden es : ${data.orden}`)
       var maxPlayers = (tipo+1)*2
-      if (data.orden === maxPlayers){
+      var usuarios = getUsersInRoom(room)
+      if (((data.orden === maxPlayers) && (dataPartida.id_torneo === 'NO')) || ((usuarios.length === maxPlayers) && ((dataPartida.id_torneo !== 'NO')))){
         const dataPlay = await pasueGame({partida: room, estado: 0});
         for (u of getUsersInRoom(user.room)){
           const dataC = await repartirCartas({partida: u.room, jugador: u.name})
@@ -473,7 +474,7 @@ io.on('connect',  (socket) => {
                 const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
                 io.to(data.torneo).emit('matches', dataMatches);
               }
-  }
+            }
               
           }
           const data2send = await getTriunfo(data.partida)
@@ -691,7 +692,7 @@ io.on('connect',  (socket) => {
           io.to(data.torneo).emit('matches', dataMatches);
         }
       }
-      callback()
+      //callback()
     }catch(err){
       console.log(err)
     }
