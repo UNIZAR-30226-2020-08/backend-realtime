@@ -166,8 +166,8 @@ io.on('connect',  (socket) => {
       socket.join(data.partida)
       socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
       socket.broadcast.to(data.partida).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
-      const data = await findPlayer({partida: data.partida, jugador: data.usuario})
-      socket.emit('orden', data.orden);
+      const dataP = await findPlayer({partida: data.partida, jugador: data.usuario})
+      socket.emit('orden', dataP.orden);
       if(msgReanudar === "SE REANUDA"){
         const lastRound = await findLastRound(data)
         console.log(lastRound)
