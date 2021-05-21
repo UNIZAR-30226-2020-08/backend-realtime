@@ -621,6 +621,25 @@ io.on('connect',  (socket) => {
 
   /* FORMATO DE DATA
   data = {
+    torneo: <nombre_torneo>,
+    jugador: <username>,
+  }
+  */
+  socket.on('leaveTorneo', async(data,callback) => {
+    try {
+      const userID = getPlayer(socket.id);
+      if (userID){
+        socket.leave(userID.room)
+      }
+      const dataSalir = await salirTorneo(data)
+      const user = removePlayer({id: socket.id, tournament: data.torneo});
+    }catch(err){
+      console.log(err)
+    }
+  })
+
+  /* FORMATO DE DATA
+  data = {
     username: <username_remitente>, 
     nombre: <nombre_partida>, 
     tipo: <tipo_partida>, 

@@ -23,8 +23,9 @@ const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
   }
 }
 
-const removePlayer = (id) => {
-  const index = players.findIndex((player) => player.id === id);
+const removePlayer = (data) => {
+  const index = players.findIndex((player) => (player.id === data.id) && 
+                                              (player.tournament === data.tournament));
 
   if(index !== -1) return players.splice(index, 1)[0];
 }
