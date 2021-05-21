@@ -467,7 +467,7 @@ io.on('connect',  (socket) => {
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 0})
               const dataFin = partidaFinalizada(data)
-
+              console.log('EL DATA FIN: ', dataFin)
               if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
                 const nextFase = data.fase + 1
                 const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
