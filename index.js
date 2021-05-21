@@ -163,11 +163,14 @@ io.on('connect',  (socket) => {
     try{
       const msgReanudar = reanudarPartida(data)
       console.log('MSG REANUDACION',msgReanudar)
+      const dataP = await findPlayer({partida: data.partida, jugador: data.usuario})
+      socket.emit('orden', dataP.orden);
+      const { error, user } = addUser({id: socket.id, name: data.usuario, room: data.partida, orden: dataP.orden})
+      if(error) return callback(error);
       socket.join(data.partida)
       socket.emit('message', { user: 'Las10últimas', text: `${user.name}, bienvenido a la sala ${user.room}.`});
       socket.broadcast.to(data.partida).emit('message', { user: 'Las10últimas', text: `${user.name} se ha unido!` });
-      const dataP = await findPlayer({partida: data.partida, jugador: data.usuario})
-      socket.emit('orden', dataP.orden);
+
       if(msgReanudar === "SE REANUDA"){
         const lastRound = await findLastRound(data)
         console.log(lastRound)
@@ -446,9 +449,10 @@ io.on('connect',  (socket) => {
       const userID = getUser(socket.id);
       if (userID){
         socket.leave(userID.room)
-        io.to(userID.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
-        io.to(userID.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
+        //io.to(userID.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
+        //io.to(userID.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
       }
+      const user = removeUser(socket.id);
     }catch(err){
       console.log(err)
     }

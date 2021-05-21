@@ -11,8 +11,9 @@ const addUser = ({ id, name, room, orden }) => {
   //if(existingUser) return { error: 'Username is taken.' };
 
   const user = { id, name, room, orden};
-
-  users.push(user);
+  if(!existingUser){
+    users.push(user);
+  }
   //0 es no pausado
 
   const existingUserPR = prRequest.find((user) => user.partida === room && user.usuario === name);
