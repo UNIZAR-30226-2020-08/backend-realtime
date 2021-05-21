@@ -262,9 +262,6 @@ io.on('connect',  (socket) => {
   */
   socket.on('lanzarCartaIA', async (data, callback) => {
     try{
-      const dataJug =  getUsersInRoom(data.partida)
-      const toEmit = dataJug[0].id
-      //console.log('socket ID: ',toEmit)
       if (data.nronda > 0){
         const dataWinner = await getRoundWinnerIA({nronda: (data.nronda - 1), partida: data.partida})
         if (dataWinner.jugador === 'IA'){
