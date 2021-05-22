@@ -430,6 +430,7 @@ io.on('connect',  (socket) => {
     data = {
     jugador: <username>,
     partida: <nombre_partida>,
+    fase: <fase>
     }
     */
   socket.on('leavePartida', async (data) => {
@@ -530,6 +531,19 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 1})
+                
+                const losMatches = getMatches(dataPartida.id_torneo)
+                const ultimaRonda = losMatches[(losMatches.length - 1)]
+                const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
+                const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
+
+                if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
+                  const fase = parseInt(laPartida.fase[0])
+                  const nextFase = fase + 1
+                  const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
+                  io.to(data.torneo).emit('matches', dataMatches);
+                  saveMatches({torneo:data.torneo, matches: dataMatches})
+                }
               }  
             }else if(miJugador.equipo === 1){
               console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
@@ -539,6 +553,18 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 0})
+                const losMatches = getMatches(dataPartida.id_torneo)
+                const ultimaRonda = losMatches[(losMatches.length - 1)]
+                const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
+                const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
+
+                if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
+                  const fase = parseInt(laPartida.fase[0])
+                  const nextFase = fase + 1
+                  const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
+                  io.to(data.torneo).emit('matches', dataMatches);
+                  saveMatches({torneo:data.torneo, matches: dataMatches})
+                }
               }  
             }
             const data2send = await getTriunfo(user.room)
