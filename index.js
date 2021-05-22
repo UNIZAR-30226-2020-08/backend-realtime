@@ -541,9 +541,9 @@ io.on('connect',  (socket) => {
                 const fase = parseInt(laPartida.fase[0])
                 if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
                   const nextFase = fase + 1
-                  const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
-                  io.to(data.torneo).emit('matches', dataMatches);
-                  saveMatches({torneo:data.torneo, matches: dataMatches})
+                  const dataMatches = await emparejamientos({torneo: dataPartida.id_torneo, fase: nextFase.toString()})
+                  io.to(dataPartida.id_torneo).emit('matches', dataMatches);
+                  saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
                 }
               }  
             }else if(miJugador.equipo === 1){
@@ -563,9 +563,9 @@ io.on('connect',  (socket) => {
                 const fase = parseInt(laPartida.fase[0])
                 if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
                   const nextFase = fase + 1
-                  const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
-                  io.to(data.torneo).emit('matches', dataMatches);
-                  saveMatches({torneo:data.torneo, matches: dataMatches})
+                  const dataMatches = await emparejamientos({torneo: dataPartida.id_torneo, fase: nextFase.toString()})
+                  io.to(dataPartida.id_torneo).emit('matches', dataMatches);
+                  saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
                 }
               }  
             }
