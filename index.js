@@ -532,7 +532,7 @@ io.on('connect',  (socket) => {
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 1})
                 
-                const losMatches = getMatches(dataPartida.id_torneo)
+                const losMatches = getMatches({torneo: dataPartida.id_torneo})
                 const ultimaRonda = losMatches[(losMatches.length - 1)]
                 console.log(ultimaRonda)
                 console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
@@ -555,7 +555,7 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 0})
-                const losMatches = getMatches(dataPartida.id_torneo)
+                const losMatches = getMatches({torneo: dataPartida.id_torneo})
                 const ultimaRonda = losMatches[(losMatches.length - 1)]
                 console.log(ultimaRonda)
                 console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
