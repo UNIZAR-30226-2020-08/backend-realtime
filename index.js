@@ -661,6 +661,7 @@ io.on('connect',  (socket) => {
   */
   socket.on('partidaTorneoFin',  async(data, callback) => {
     try {
+      console.log('EL DATA: ',data)
       const dataFin = partidaFinalizada({torneo: data.torneo, partida: data.partida, fase: data.fase})
 
       if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
