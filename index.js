@@ -650,7 +650,7 @@ io.on('connect',  (socket) => {
     try {
       const userID = getPlayer(socket.id);
       if (userID){
-        socket.leave(userID.room)
+        socket.leave(userID.tournament)
       }
       const dataSalir = await salirTorneo(data)
       const user = removePlayer({id: socket.id, tournament: data.torneo});
@@ -671,7 +671,7 @@ io.on('connect',  (socket) => {
     try {
       const userID = getPlayer(socket.id);
       if (userID){
-        socket.leave(userID.room)
+        socket.leave(userID.tournament)
       }
       const dataPer = await findPlayer(data)
       if (dataPer.equipo === 0){
@@ -712,12 +712,16 @@ io.on('connect',  (socket) => {
   }
   */
   socket.on('reanudarTorneo', async(data,callback) => {
-    socket.join(data.torneo)
-    const dataReanudar = getMatches(data)
-    console.log("REANUDAR TORNEO");
-    console.log(data);
-    console.log(dataReanudar);
-    io.to(data.torneo).emit('torneoReanudado', dataReanudar);
+    try{
+      socket.join(data.torneo)
+      const dataReanudar = getMatches(data)
+      console.log("REANUDAR TORNEO");
+      console.log(data);
+      console.log(dataReanudar);
+      io.to(data.torneo).emit('torneoReanudado', dataReanudar);
+    }catch(err){
+      console.log(err)
+    }
   })
 
   /* FORMATO DE DATA
