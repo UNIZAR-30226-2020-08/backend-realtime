@@ -538,9 +538,8 @@ io.on('connect',  (socket) => {
                 console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
                 const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
                 const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
-
-                if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
-                  const fase = parseInt(laPartida.fase[0])
+                const fase = parseInt(laPartida.fase[0])
+                if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
                   const nextFase = fase + 1
                   const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
                   io.to(data.torneo).emit('matches', dataMatches);
@@ -561,9 +560,8 @@ io.on('connect',  (socket) => {
                 console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
                 const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
                 const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
-
-                if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
-                  const fase = parseInt(laPartida.fase[0])
+                const fase = parseInt(laPartida.fase[0])
+                if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
                   const nextFase = fase + 1
                   const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
                   io.to(data.torneo).emit('matches', dataMatches);
