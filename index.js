@@ -429,8 +429,7 @@ io.on('connect',  (socket) => {
      /* FORMATO DE DATA
     data = {
     jugador: <username>,
-    partida: <nombre_partida>,
-    fase: <fase>
+    partida: <nombre_partida>
     }
     */
   socket.on('leavePartida', async (data) => {
@@ -453,7 +452,7 @@ io.on('connect',  (socket) => {
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 1})
               /*
-                        const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
+              const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
 
               if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
                 const nextFase = data.fase + 1
