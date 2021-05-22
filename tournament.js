@@ -43,7 +43,7 @@ const partidaFinalizada = (data) => {
   console.log('NPARTIDAS: ', nPartidas)
 
   const prevFinished = finalizadas.find((g) => g.partida === partida);
-  if (prevFinished){
+  if (!prevFinished){
     const partida = finalizadas.push(data)
   }
   const partidasAcabadas = finalizadas.filter((p) => ((p.fase === fase) && (p.torneo === torneo)))
