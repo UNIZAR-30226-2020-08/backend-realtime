@@ -714,6 +714,9 @@ io.on('connect',  (socket) => {
   socket.on('reanudarTorneo', async(data,callback) => {
     socket.join(data.torneo)
     const dataReanudar = getMatches(data)
+    console.log("REANUDAR TORNEO");
+    console.log(data);
+    console.log(dataReanudar);
     io.to(data.torneo).emit('torneoReanudado', dataReanudar);
   })
 
