@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarPartida, reanudarPartida } = require('./users');
-const { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada } = require('./tournament');
+const { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
 const { unirseTorneo, salirTorneo } = require("./services/participa_torneo.service");
@@ -457,6 +457,7 @@ io.on('connect',  (socket) => {
                 const nextFase = data.fase + 1
                 const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
                 io.to(data.torneo).emit('matches', dataMatches);
+                saveMatches({torneo:data.torneo, matches: dataMatches})
               }
             }  
           }else if(miJugador.equipo === 1){
@@ -473,6 +474,7 @@ io.on('connect',  (socket) => {
                 const nextFase = data.fase + 1
                 const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
                 io.to(data.torneo).emit('matches', dataMatches);
+                saveMatches({torneo:data.torneo, matches: dataMatches})
               }
             }
               
@@ -601,9 +603,11 @@ io.on('connect',  (socket) => {
         if (nTeams === 16){
           console.log('EL TORNEO ES DE 16')
           dataMatches = await emparejamientos({torneo: tournament, fase: '0'})
+          saveMatches({torneo:tournament, matches: dataMatches})
         }else if (nTeams === 8){
           console.log('EL TORNEO ES DE 8')
           dataMatches = await emparejamientos({torneo: tournament, fase: '1'})
+          saveMatches({torneo:tournament, matches: dataMatches})
         }
         console.log('LOS MATCHES: ', dataMatches)
         io.to(tournament).emit('matches', dataMatches);
@@ -628,6 +632,7 @@ io.on('connect',  (socket) => {
         const nextFase = data.fase + 1
         const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
         io.to(data.torneo).emit('matches', dataMatches);
+        saveMatches({torneo:data.torneo, matches: dataMatches})
       }
       callback();
     }catch(err){
@@ -679,6 +684,8 @@ io.on('connect',  (socket) => {
           const nextFase = data.fase + 1
           const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
           io.to(data.torneo).emit('matches', dataMatches);
+          saveMatches({torneo:data.torneo, matches: dataMatches})
+          
         }
       }else if (dataPer.equipo === 1){
         const perdida = await pasueGame({partida: data.partida, puntos_e0: 101, puntos_e1: 0})
@@ -690,12 +697,23 @@ io.on('connect',  (socket) => {
           const nextFase = data.fase + 1
           const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
           io.to(data.torneo).emit('matches', dataMatches);
+          saveMatches({torneo:data.torneo, matches: dataMatches})
         }
       }
       //callback()
     }catch(err){
       console.log(err)
     }
+  })
+  
+  /* FORMATO DE DATA
+  data = {
+    torneo: <nombre_torneo>,
+  }
+  */
+  socket.on('reanudarTorneo', async(data,callback) => {
+    const dataReanudar = getMatches(data)
+    io.to(data.torneo).emit('torneoReanudado', dataReanudar);
   })
 
   /* FORMATO DE DATA

@@ -1,5 +1,6 @@
 const players = [];
 const finalizadas = [];
+const braquets = [];
 
 const addPlayer = ({ id, name, tournament, tipo, nTeams }) => {
   maxPlayers = (tipo + 1)*nTeams
@@ -56,4 +57,15 @@ const getPlayerByName = (name) => players.find((player) => player.name === name)
 
 const getUsersInTournamet = (tournament) => players.filter((player) => player.tournament === tournament);
 
-module.exports = { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada };
+//{torneo, matches}
+const saveMatches =  (data) => {
+  braquets.push(data)
+}
+
+//torneo
+const getMatches = (data) => {
+  const partidasBraquet = braquets.filter((p) => (p.torneo === data.torneo))
+  return partidasBraquet
+}
+
+module.exports = { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches};
