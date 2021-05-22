@@ -557,6 +557,8 @@ io.on('connect',  (socket) => {
                           partida: dataPartida.nombre, eq_winner: 0})
                 const losMatches = getMatches(dataPartida.id_torneo)
                 const ultimaRonda = losMatches[(losMatches.length - 1)]
+                console.log(ultimaRonda)
+                console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
                 const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
                 const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
 
