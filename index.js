@@ -531,7 +531,7 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 1})
-                
+                /*
                 const losMatches = getMatches({torneo: dataPartida.id_torneo})
                 const ultimaRonda = losMatches[(losMatches.length - 1)]
                 console.log(ultimaRonda)
@@ -545,6 +545,7 @@ io.on('connect',  (socket) => {
                   io.to(dataPartida.id_torneo).emit('matches', dataMatches);
                   saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
                 }
+                */
               }  
             }else if(miJugador.equipo === 1){
               console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
@@ -554,6 +555,7 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 0})
+                /*
                 const losMatches = getMatches({torneo: dataPartida.id_torneo})
                 const ultimaRonda = losMatches[(losMatches.length - 1)]
                 console.log(ultimaRonda)
@@ -567,6 +569,7 @@ io.on('connect',  (socket) => {
                   io.to(dataPartida.id_torneo).emit('matches', dataMatches);
                   saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
                 }
+                */
               }  
             }
             const data2send = await getTriunfo(user.room)
@@ -687,7 +690,7 @@ io.on('connect',  (socket) => {
     }
   })
 
-    /* FORMATO DE DATA
+  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
     jugador: <username>,
