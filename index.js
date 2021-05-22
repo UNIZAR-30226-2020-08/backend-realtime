@@ -452,7 +452,7 @@ io.on('connect',  (socket) => {
             if (dataPartida.id_torneo !== 'NO'){
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 1})
-              const dataFin = partidaFinalizada(data)
+              const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
 
               if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
                 const nextFase = data.fase + 1
@@ -469,7 +469,7 @@ io.on('connect',  (socket) => {
             if (dataPartida.id_torneo !== 'NO'){
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 0})
-              const dataFin = partidaFinalizada(data)
+              const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
               console.log('EL DATA FIN: ', dataFin)
               if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
                 const nextFase = data.fase + 1
@@ -652,12 +652,13 @@ io.on('connect',  (socket) => {
  /* FORMATO DE DATA
   data = {
     torneo: <nombre_torneo>,
+    partida: <partida>,
     fase: <nFase>,
   }
   */
   socket.on('partidaTorneoFin',  async(data, callback) => {
     try {
-      const dataFin = partidaFinalizada(data)
+      const dataFin = partidaFinalizada({torneo: data.torneo, partida: data.partida, fase: data.fase})
 
       if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
         const nextFase = data.fase + 1
@@ -709,7 +710,7 @@ io.on('connect',  (socket) => {
         const perdida = await pasueGame({partida: data.partida, puntos_e0: 0, puntos_e1: 101})
         const dataCuadro = await updateCuadroTorneo({torneo: data.torneo, 
           partida: data.partida, eq_winner: 1})
-        const dataFin = partidaFinalizada(data)
+        const dataFin = partidaFinalizada({torneo: data.torneo, partida: data.partida, fase: data.fase})
 
         if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
           const nextFase = data.fase + 1
@@ -722,7 +723,7 @@ io.on('connect',  (socket) => {
         const perdida = await pasueGame({partida: data.partida, puntos_e0: 101, puntos_e1: 0})
         const dataCuadro = await updateCuadroTorneo({torneo: data.torneo, 
           partida: data.partida, eq_winner: 0})
-        const dataFin = partidaFinalizada(data)
+        const dataFin = partidaFinalizada({torneo: data.torneo, partida: data.partida, fase: data.fase})
 
         if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
           const nextFase = data.fase + 1
