@@ -736,7 +736,7 @@ io.on('connect',  (socket) => {
           saveMatches({torneo:data.torneo, matches: dataMatches})
         }
       }
-      io.to(data.torneo).emit('abandonoTorneo', {jugador: dataPer.jugador});
+      io.to(data.torneo).emit('abandonoTorneo', {jugador: dataPer.jugador, partida: data.partida});
       //callback()
     }catch(err){
       console.log(err)
