@@ -746,7 +746,7 @@ io.on('connect',  (socket) => {
       const partida = lastMatches[(lastMatches.length - 1)].partida
       console.log('PARTIDA FINAL: ', partida)
       const fin = torneoFinalizado(partida)
-      if (fin){
+      if ((fin) && (lastMatches[(lastMatches.length - 1)].fase === '3.1')){
         const players = await findAllPlayers(partida)
         var i = 0;
         var ganadores = []
