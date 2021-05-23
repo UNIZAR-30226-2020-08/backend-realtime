@@ -628,7 +628,6 @@ io.on('connect',  (socket) => {
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       }
       console.log('se ha insertado en la bd ', dataJoin)
-      console.log('el mesaje se envia a ', player.id)
       io.to(tournament).emit('joinedT', {player});
       if(dataJoin.message === 'JOIN'){
         var maxPlayers = (tipo + 1)* nTeams
@@ -679,6 +678,8 @@ io.on('connect',  (socket) => {
         const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
         io.to(data.torneo).emit('matches', dataMatches);
         saveMatches({torneo:data.torneo, matches: dataMatches})
+      }else {
+
       }
       callback();
     }catch(err){
