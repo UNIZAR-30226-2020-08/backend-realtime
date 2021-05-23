@@ -680,7 +680,7 @@ io.on('connect',  (socket) => {
         const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
         io.to(data.torneo).emit('matches', dataMatches);
         saveMatches({torneo:data.torneo, matches: dataMatches})
-      }else {
+      }else if (dataFin === 'TODAS ACABADAS' && (data.fase === 3)){
         const players = await findAllPlayers(data.partida)
         var i = 0;
         var ganadores = []
@@ -744,7 +744,7 @@ io.on('connect',  (socket) => {
           io.to(data.torneo).emit('matches', dataMatches);
           saveMatches({torneo:data.torneo, matches: dataMatches})
           
-        }else{ 
+        }else if ((dataFin === 'TODAS ACABADAS') && (data.fase === 3)){ 
           const players = await findAllPlayers(data.partida)
           var i = 0;
           var ganadores = []
@@ -767,7 +767,7 @@ io.on('connect',  (socket) => {
           const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
           io.to(data.torneo).emit('matches', dataMatches);
           saveMatches({torneo:data.torneo, matches: dataMatches})
-        }else{
+        }else if ((dataFin === 'TODAS ACABADAS') && (data.fase === 3)){
           const players = await findAllPlayers(data.partida)
           var i = 0;
           var ganadores = []
