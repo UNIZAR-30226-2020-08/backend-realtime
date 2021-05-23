@@ -629,22 +629,24 @@ io.on('connect',  (socket) => {
       console.log('se ha insertado en la bd ', dataJoin)
       console.log('el mesaje se envia a ', player.id)
       io.to(tournament).emit('joinedT', {player});
-      if (nPlayers === maxPlayers){
-        console.log('Se envia completo', nPlayers)
-        //io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
-        //Se hacen los emparejamientos
-        var dataMatches
-        if (nTeams === 16){
-          console.log('EL TORNEO ES DE 16')
-          dataMatches = await emparejamientos({torneo: tournament, fase: '0'})
-          saveMatches({torneo:tournament, matches: dataMatches})
-        }else if (nTeams === 8){
-          console.log('EL TORNEO ES DE 8')
-          dataMatches = await emparejamientos({torneo: tournament, fase: '1'})
-          saveMatches({torneo:tournament, matches: dataMatches})
+      if(dataJoin.message === 'JOIN'){
+        if (nPlayers === maxPlayers){
+          console.log('Se envia completo', nPlayers)
+          //io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
+          //Se hacen los emparejamientos
+          var dataMatches
+          if (nTeams === 16){
+            console.log('EL TORNEO ES DE 16')
+            dataMatches = await emparejamientos({torneo: tournament, fase: '0'})
+            saveMatches({torneo:tournament, matches: dataMatches})
+          }else if (nTeams === 8){
+            console.log('EL TORNEO ES DE 8')
+            dataMatches = await emparejamientos({torneo: tournament, fase: '1'})
+            saveMatches({torneo:tournament, matches: dataMatches})
+          }
+          console.log('LOS MATCHES: ', dataMatches)
+          io.to(tournament).emit('matches', dataMatches);
         }
-        console.log('LOS MATCHES: ', dataMatches)
-        io.to(tournament).emit('matches', dataMatches);
       }
       callback();
     }catch(err){
