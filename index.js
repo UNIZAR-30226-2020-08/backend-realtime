@@ -628,11 +628,11 @@ io.on('connect',  (socket) => {
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       }
       console.log('se ha insertado en la bd ', dataJoin)
-      io.to(tournament).emit('joinedT', {player});
       if(dataJoin.message === 'JOIN'){
         var maxPlayers = (tipo + 1)* nTeams
         const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
         socket.join(player.tournament);
+        io.to(tournament).emit('joinedT', {player});
         console.log('Entra al torneo ', player, nPlayers)
         if(error) return callback(error);
         if (nPlayers === maxPlayers){
