@@ -384,7 +384,6 @@ io.on('connect',  (socket) => {
     try{
       const dataCambio = await cambiar7(data)
       console.log(dataCambio);
-      //const uId = await getUserByName(data.jugador);
       io.to(data.nombre).emit('cartaCambio', {tuya: dataCambio});
       callback();
     }catch(err){
@@ -403,8 +402,6 @@ io.on('connect',  (socket) => {
     try{
       const dataCante = await cantar(data)
       await sumarEnCante(data,dataCante)
-      //const uId = await getUserByName(data.jugador);
-      //io.to(uId.id).emit('Cante', {tuya: dataCante.pertenece});
       io.to(data.nombre).emit('cante', dataCante);
       callback();
     }catch(err){
@@ -417,8 +414,6 @@ io.on('connect',  (socket) => {
       const userID = getUser(socket.id);
       if (userID){
         socket.leave(userID.room)
-        //io.to(userID.room).emit('message', { user: 'Las10últimas', text: `${user.name} abandonó la partida.` });
-        //io.to(userID.room).emit('roomData', { room: user.room, users: getUsersInRoom(user.room)});
       }
       const user = removeUser(socket.id);
     }catch(err){
@@ -451,16 +446,6 @@ io.on('connect',  (socket) => {
             if (dataPartida.id_torneo !== 'NO'){
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 1})
-              /*
-              const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
-
-              if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
-                const nextFase = data.fase + 1
-                const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
-                io.to(data.torneo).emit('matches', dataMatches);
-                saveMatches({torneo:data.torneo, matches: dataMatches})
-              }
-              */
             }  
           }else if(miJugador.equipo === 1){
             console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
@@ -470,16 +455,6 @@ io.on('connect',  (socket) => {
             if (dataPartida.id_torneo !== 'NO'){
               const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                         partida: dataPartida.nombre, eq_winner: 0})
-              /*
-              const dataFin = partidaFinalizada({torneo: dataPartida.id_torneo, partida: data.partida, fase: data.fase})
-              console.log('EL DATA FIN: ', dataFin)
-              if ((dataFin === 'TODAS ACABADAS') && (data.fase < 3)){
-                const nextFase = data.fase + 1
-                const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
-                io.to(data.torneo).emit('matches', dataMatches);
-                saveMatches({torneo:data.torneo, matches: dataMatches})
-              }
-              */
             }
               
           }
@@ -534,21 +509,6 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 1})
-                /*
-                const losMatches = getMatches({torneo: dataPartida.id_torneo})
-                const ultimaRonda = losMatches[(losMatches.length - 1)]
-                console.log(ultimaRonda)
-                console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
-                const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
-                const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
-                const fase = parseInt(laPartida.fase[0])
-                if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
-                  const nextFase = fase + 1
-                  const dataMatches = await emparejamientos({torneo: dataPartida.id_torneo, fase: nextFase.toString()})
-                  io.to(dataPartida.id_torneo).emit('matches', dataMatches);
-                  saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
-                }
-                */
               }  
             }else if(miJugador.equipo === 1){
               console.log(` HA PERDIDO EL EQUIPO ${miJugador.equipo}`)
@@ -558,21 +518,6 @@ io.on('connect',  (socket) => {
               if (dataPartida.id_torneo !== 'NO'){
                 const dataCuadroT = await updateCuadroTorneo({torneo: dataPartida.id_torneo, 
                           partida: dataPartida.nombre, eq_winner: 0})
-                /*
-                const losMatches = getMatches({torneo: dataPartida.id_torneo})
-                const ultimaRonda = losMatches[(losMatches.length - 1)]
-                console.log(ultimaRonda)
-                console.log('LOS MATCHES DE VUELTA', ultimaRonda.matches)
-                const laPartida = ultimaRonda.matches.find((game) => game.partida === dataPartida.nombre)
-                const dataFin = partidaFinalizada({torneo:laPartida.torneo, fase: parseInt(laPartida.fase[0])})
-                const fase = parseInt(laPartida.fase[0])
-                if ((dataFin === 'TODAS ACABADAS') && (fase < 3)){
-                  const nextFase = fase + 1
-                  const dataMatches = await emparejamientos({torneo: dataPartida.id_torneo, fase: nextFase.toString()})
-                  io.to(dataPartida.id_torneo).emit('matches', dataMatches);
-                  saveMatches({torneo:dataPartida.id_torneo, matches: dataMatches})
-                }
-                */
               }  
             }
             const data2send = await getTriunfo(user.room)
