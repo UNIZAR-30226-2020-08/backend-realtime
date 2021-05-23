@@ -624,10 +624,12 @@ io.on('connect',  (socket) => {
       var dataJoin
       if(contrasenya !== 'NO'){
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name, contrasenya: contrasenya})
+        console.log('HAY CONTRASENYA', dataJoin)
       }else{
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
+        console.log('NO HAY CONTRASENYA', dataJoin)
       }
-      console.log('se ha insertado en la bd ', dataJoin)
+      //console.log('se ha insertado en la bd ', dataJoin)
       if(dataJoin.message === 'JOIN'){
         var maxPlayers = (tipo + 1)* nTeams
         const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
