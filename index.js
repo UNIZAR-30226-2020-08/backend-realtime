@@ -631,7 +631,7 @@ io.on('connect',  (socket) => {
         var ganadores = []
         for (i = 0; i < players.length; i++){
           if(players[i].equipo === 1){
-            ganadores.push(players[i].nombre)
+            ganadores.push(players[i].jugador)
           }
         }
         console.log('LOS GANADORES DEL TORNEO: ',ganadores)
@@ -695,7 +695,7 @@ io.on('connect',  (socket) => {
           var ganadores = []
           for (i = 0; i < players.length; i++){
             if(players[i].equipo === 1){
-              ganadores.push(players[i].nombre)
+              ganadores.push(players[i].jugador)
             }
           }
           console.log('LOS GANADORES DEL TORNEO: ',ganadores)
@@ -718,7 +718,7 @@ io.on('connect',  (socket) => {
           var ganadores = []
           for (i = 0; i < players.length; i++){
             if(players[i].equipo === 1){
-              ganadores.push(players[i].nombre)
+              ganadores.push(players[i].jugador)
             }
           }
           console.log('LOS GANADORES DEL TORNEO: ',ganadores)
