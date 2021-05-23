@@ -62,6 +62,8 @@ const getPlayerByName = (name) => players.find((player) => player.name === name)
 
 const getUsersInTournamet = (tournament) => players.filter((player) => player.tournament === tournament);
 
+const torneoFinalizado = ((partida) => finalizadas.find((t) => t.partida === partida))
+
 //{torneo, matches}
 const saveMatches =  (data) => {
   braquets.push(data)
@@ -73,4 +75,4 @@ const getMatches = (data) => {
   return partidasBraquet
 }
 
-module.exports = { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches};
+module.exports = { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches, torneoFinalizado};

@@ -4,7 +4,7 @@ const socketio = require('socket.io');
 const cors = require('cors');
 
 const { addUser, removeUser, getUser, getUsersInRoom, getUserByName, pausarPartida, reanudarPartida } = require('./users');
-const { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches } = require('./tournament');
+const { addPlayer, removePlayer, getPlayer, getUsersInTournamet, partidaFinalizada,saveMatches, getMatches, torneoFinalizado } = require('./tournament');
 const { joinGame, repartirCartas, findAllPlayers, robarCarta, findPlayer, deletePlayer } = require("./services/pertenece.service");
 const { findUser,sumarCopas,restarCopas } = require("./services/usuario.service");
 const { unirseTorneo, salirTorneo } = require("./services/participa_torneo.service");
@@ -741,6 +741,23 @@ io.on('connect',  (socket) => {
     try{
       socket.join(data.torneo)
       const dataReanudar = getMatches(data)
+      var lastMatches = dataReanudar[(dataReanudar.length - 1)].matches
+      console.log('LAST MATCHES: ', lastMatches)
+      const partida = lastMatches[(lastMatches.length - 1)].partida
+      console.log('PARTIDA FINAL: ', partida)
+      const fin = torneoFinalizado(partida)
+      if (fin){
+        const players = await findAllPlayers(partida)
+        var i = 0;
+        var ganadores = []
+        for (i = 0; i < players.length; i++){
+          if(players[i].equipo === 1){
+            ganadores.push(players[i].jugador)
+          }
+        }
+        console.log('LOS GANADORES DEL TORNEO: ',ganadores)
+        io.to(data.torneo).emit('ganadorTorneo', ganadores);
+      }
       console.log("REANUDAR TORNEO");
       console.log(data);
       console.log(dataReanudar);
