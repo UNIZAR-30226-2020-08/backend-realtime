@@ -654,7 +654,7 @@ io.on('connect',  (socket) => {
           io.to(tournament).emit('matches', dataMatches);
         }
       }else{
-        socket.emit('accesoDenegado', {usuario: data.name});
+        socket.emit('accesoDenegado', {usuario: name});
       }
       callback();
     }catch(err){
