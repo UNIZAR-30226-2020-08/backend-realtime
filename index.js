@@ -653,6 +653,8 @@ io.on('connect',  (socket) => {
           console.log('LOS MATCHES: ', dataMatches)
           io.to(tournament).emit('matches', dataMatches);
         }
+      }else{
+        socket.emit('accesoDenegado', {usuario: data.name});
       }
       callback();
     }catch(err){
