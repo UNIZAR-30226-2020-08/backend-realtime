@@ -628,7 +628,7 @@ io.on('connect',  (socket) => {
       if(error) return callback(error);
       var dataJoin
       if(contrasenya !== 'NO'){
-        dataJoin = await unirseTorneo({torneo: tournament, jugador: name, contrasenya: contrsaenya})
+        dataJoin = await unirseTorneo({torneo: tournament, jugador: name, contrasenya: contrasenya})
       }else{
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
       }
