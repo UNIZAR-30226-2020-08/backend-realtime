@@ -621,11 +621,6 @@ io.on('connect',  (socket) => {
   }*/
   socket.on('joinTournament',  async({name, tournament, tipo, nTeams, contrasenya}, callback) => {
     try {
-      var maxPlayers = (tipo + 1)* nTeams
-      const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
-      socket.join(player.tournament);
-      console.log('Entra al torneo ', player, nPlayers)
-      if(error) return callback(error);
       var dataJoin
       if(contrasenya !== 'NO'){
         dataJoin = await unirseTorneo({torneo: tournament, jugador: name, contrasenya: contrasenya})
@@ -636,6 +631,11 @@ io.on('connect',  (socket) => {
       console.log('el mesaje se envia a ', player.id)
       io.to(tournament).emit('joinedT', {player});
       if(dataJoin.message === 'JOIN'){
+        var maxPlayers = (tipo + 1)* nTeams
+        const { error, player, nPlayers } = addPlayer({ id: socket.id, name, tournament, tipo, nTeams })
+        socket.join(player.tournament);
+        console.log('Entra al torneo ', player, nPlayers)
+        if(error) return callback(error);
         if (nPlayers === maxPlayers){
           console.log('Se envia completo', nPlayers)
           //io.to(tournament).emit('completo', {message: `torneo ${tournament} completo`});
