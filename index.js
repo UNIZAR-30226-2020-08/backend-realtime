@@ -681,7 +681,16 @@ io.on('connect',  (socket) => {
         io.to(data.torneo).emit('matches', dataMatches);
         saveMatches({torneo:data.torneo, matches: dataMatches})
       }else {
-
+        const players = await findAllPlayers(data.partida)
+        var i = 0;
+        var ganadores = []
+        for (i = 0; i < players.length; i++){
+          if(players[i].equipo === 1){
+            ganadores.push(players[i].nombre)
+          }
+        }
+        console.log('LOS GANADORES DEL TORNEO: ',ganadores)
+        io.to(data.torneo).emit('ganadorTorneo', ganadores);
       }
       callback();
     }catch(err){
@@ -735,6 +744,17 @@ io.on('connect',  (socket) => {
           io.to(data.torneo).emit('matches', dataMatches);
           saveMatches({torneo:data.torneo, matches: dataMatches})
           
+        }else{ 
+          const players = await findAllPlayers(data.partida)
+          var i = 0;
+          var ganadores = []
+          for (i = 0; i < players.length; i++){
+            if(players[i].equipo === 1){
+              ganadores.push(players[i].nombre)
+            }
+          }
+          console.log('LOS GANADORES DEL TORNEO: ',ganadores)
+          io.to(data.torneo).emit('ganadorTorneo', ganadores);
         }
       }else if (dataPer.equipo === 1){
         const perdida = await pasueGame({partida: data.partida, puntos_e0: 101, puntos_e1: 0})
@@ -747,6 +767,17 @@ io.on('connect',  (socket) => {
           const dataMatches = await emparejamientos({torneo: data.torneo, fase: nextFase.toString()})
           io.to(data.torneo).emit('matches', dataMatches);
           saveMatches({torneo:data.torneo, matches: dataMatches})
+        }else{
+          const players = await findAllPlayers(data.partida)
+          var i = 0;
+          var ganadores = []
+          for (i = 0; i < players.length; i++){
+            if(players[i].equipo === 1){
+              ganadores.push(players[i].nombre)
+            }
+          }
+          console.log('LOS GANADORES DEL TORNEO: ',ganadores)
+          io.to(data.torneo).emit('ganadorTorneo', ganadores);
         }
       }
       io.to(data.torneo).emit('abandonoTorneo', {jugador: dataPer.jugador, partida: data.partida});
