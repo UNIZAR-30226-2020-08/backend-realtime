@@ -616,7 +616,8 @@ io.on('connect',  (socket) => {
     name: <username>,
     tournament: <nombre_partida>,
     tipo: <tipo>,
-    nTeams: <nEquipos>
+    nTeams: <nEquipos>,
+    contrasenya: <contrasena>
   }*/
   socket.on('joinTournament',  async({name, tournament, tipo, nTeams}, callback) => {
     try {
@@ -625,7 +626,12 @@ io.on('connect',  (socket) => {
       socket.join(player.tournament);
       console.log('Entra al torneo ', player, nPlayers)
       if(error) return callback(error);
-      const dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
+      var dataJoin
+      if(data.contrasenya !== 'NO'){
+        dataJoin = await unirseTorneo({torneo: tournament, jugador: name, contrasenya: data.contrsaenya})
+      }else{
+        dataJoin = await unirseTorneo({torneo: tournament, jugador: name})
+      }
       console.log('se ha insertado en la bd ', dataJoin)
       console.log('el mesaje se envia a ', player.id)
       io.to(tournament).emit('joinedT', {player});
