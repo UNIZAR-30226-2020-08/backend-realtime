@@ -192,6 +192,10 @@ io.on('connect',  (socket) => {
           socket.broadcast.to(data.partida).emit('RepartirCartasRP', {repartidas: u});
           socket.emit('RepartirCartasRP', {repartidas: u});
         }
+        socket.broadcast.to(data.partida).emit('RepartirTriunfoRPW', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, 
+          winner:dataLastRound.jugador, puntos_e0: dataT.puntos_e0, puntos_e1: dataT.puntos_e1});
+        socket.emit('RepartirTriunfoRPW', {triunfoRepartido: dataT.triunfo, nronda: lastRound.nronda, 
+          winner:dataLastRound.jugador, puntos_e0: dataT.puntos_e0, puntos_e1: dataT.puntos_e1});
       }
       callback();
     }catch(err){
